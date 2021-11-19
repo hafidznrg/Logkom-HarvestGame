@@ -70,3 +70,42 @@ displayMap :-
     print('            '),
     printTile(0,0), !.
 
+/* MOVEMENT */
+handleMove(X,Y) :-
+    (\+ tile(X,Y,_)),
+    retract(tile(_,_,'P')),
+    asserta(tile(X,Y,'P')).
+
+handleMove(X,Y) :-
+    tile(X,Y,C),
+    ((C = 'R'; C = 'F'; C = 'M'; C = 'Q'; C = 'H'),
+    retract(tile(_,_,'P')),
+    asserta(tile(X,Y,'P'));
+    cantMove).
+    
+% move right to east
+e :-
+    tile(X,Y,'P'),
+    Y1 is Y+1,
+    handleMove(X,Y1), !.
+
+% move left to west
+w :-
+    tile(X,Y,'P'),
+    Y1 is Y-1,
+    handleMove(X,Y1), !.
+
+% move top to north
+n :-
+    tile(X,Y,'P'),
+    X1 is X-1,
+    handleMove(X1,Y), !.
+
+% move bottom to south
+s :-
+    tile(X,Y,'P'),
+    X1 is X+1,
+    handleMove(X1,Y), !.
+
+cantMove :- 
+    write('You can\'t move to this location'), nl, !.
