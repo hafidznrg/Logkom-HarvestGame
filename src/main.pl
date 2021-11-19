@@ -1,3 +1,6 @@
+:- include('map.pl').
+
 start :- 
-    write('Hello').
+    write('Hello'), nl,
+    createMap.
     
