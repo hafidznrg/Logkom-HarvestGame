@@ -1,5 +1,7 @@
+% Dev dependencies
+% :- include('time.pl').
+
 :- dynamic(lastHarvest/2).
-:- dynamic(day/1).
 :- dynamic(count/2).
 :- dynamic(ternak/1).
 
