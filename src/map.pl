@@ -1,17 +1,8 @@
 :- dynamic(tile/3).
 :- dynamic(map_size/2).
 
-/* MAP border */
-% tile(0,_,'#').
-% tile(_,0,'#').
-% tile(16,_,'#').
-% tile(_,21,'#').
-
-randomPlayerPos :-
-    random(1, 15, X),
-    random(1, 20, Y),
-    asserta(tile(X,Y,'P')), !.
-
+% I.S. Initialize MAP
+% F.S. Map has created, initialize player position at House
 createMap :- 
     write('Map has created.'), nl,
     asserta(map_size(15,20)),
@@ -20,21 +11,22 @@ createMap :-
     assertz(tile(16,_,'#')),
     assertz(tile(_,21,'#')),
     assertz(tile(2,6,'R')),
-    asserta(tile(4,4,'P')),         /* Posisi Player */
+    asserta(tile(4,4,'P')),
     assertz(tile(4,4,'H')),
     assertz(tile(4,9,'F')),
     assertz(tile(8,8,'Q')),
     assertz(tile(8,13,'M')).
-    % randomPlayerPos.
 
-% Border kanan bawah
+% I.S. Tile at last row and last column
+% F.S. Print border.
 printTile(X,Y) :-
     map_size(Height,Width),
     X is Height+1,
     Y is Width+1, !,
     write('#'), nl.
 
-% Border bawah
+% I.S. Tile at last row
+% F.S. Print border, print next tile
 printTile(X,Y) :-
     map_size(Height,Width),
     X is Height+1,
@@ -43,7 +35,8 @@ printTile(X,Y) :-
     Y1 is Y+1,
     printTile(X,Y1).
 
-% Border kanan
+% I.S. Tile at last column for each row
+% F.S. Print border, print the first tile for the next row
 printTile(X,Y) :-
     map_size(Height,Width),
     X =< Height,
@@ -53,7 +46,8 @@ printTile(X,Y) :-
     print('            '),
     printTile(X1,0).
 
-% Isi di dalam MAP
+% I.S. -
+% F.S. printTile at position (X,Y)
 printTile(X,Y) :-
     map_size(Height, Width),
     X =< Height,
@@ -61,6 +55,8 @@ printTile(X,Y) :-
     (tile(X,Y,C), write(C), Y1 is Y+1, printTile(X,Y1);
     \+ tile(X,Y,_), write('-'), Y1 is Y+1, printTile(X,Y1)).
 
+% I.S. displayMap is called
+% F.S. Displayed Map
 displayMap :-
     write('[]==========================================[]'), nl,
     write('||                                          ||'), nl,
@@ -71,11 +67,16 @@ displayMap :-
     printTile(0,0), !.
 
 /* MOVEMENT */
+% I.S. handleMove is called
+% F.S. Player postion is updated
 handleMove(X,Y) :-
     (\+ tile(X,Y,_)),
     retract(tile(_,_,'P')),
     asserta(tile(X,Y,'P')).
 
+% I.S. handleMove is called
+% F.S. Player position is updated if they want to go to
+% Ranch, Farm, Marketplace, Quest, or Home; else call cantMove
 handleMove(X,Y) :-
     tile(X,Y,C),
     ((C = 'R'; C = 'F'; C = 'M'; C = 'Q'; C = 'H'),
@@ -83,29 +84,35 @@ handleMove(X,Y) :-
     asserta(tile(X,Y,'P'));
     cantMove).
     
-% move right to east
+% I.S. Player position at (X,Y)
+% F.S. handleMove to East
 e :-
     tile(X,Y,'P'),
     Y1 is Y+1,
     handleMove(X,Y1), !.
 
-% move left to west
+% I.S. Player position at (X,Y)
+% F.S. handleMove to West
 w :-
     tile(X,Y,'P'),
     Y1 is Y-1,
     handleMove(X,Y1), !.
 
-% move top to north
+% I.S. Player position at (X,Y)
+% F.S. handleMove to North
 n :-
     tile(X,Y,'P'),
     X1 is X-1,
     handleMove(X1,Y), !.
 
-% move bottom to south
+% I.S. Player position at (X,Y)
+% F.S. handleMove to South
 s :-
     tile(X,Y,'P'),
     X1 is X+1,
     handleMove(X1,Y), !.
 
+% I.S. cantMove called
+% F.S. Displayed error message can't move
 cantMove :- 
     write('You can\'t move to this location'), nl, !.
