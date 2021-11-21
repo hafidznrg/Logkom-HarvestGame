@@ -101,7 +101,7 @@ handleMove(X,Y) :-
 % Ranch, Farm, Marketplace, Quest, or Home; else call cantMove
 handleMove(X,Y) :-
     tile(X,Y,C),
-    ((C = 'R'; C = 'F'; C = 'M'; C = 'Q'; C = 'H'),
+    ((C = 'R'; C = 'F'; C = 'M'; C = 'Q'; C = 'H'; C = ('=')),
     retract(tile(_,_,'P')),
     asserta(tile(X,Y,'P'));
     cantMove).

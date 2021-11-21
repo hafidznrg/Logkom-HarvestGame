@@ -16,7 +16,7 @@ dig :-
     tile(X,Y,'P'),
     (tile(X,Y,C), (C = 'R'; C = 'F'; C = 'M'; C = 'Q'; C = 'H')) -> write('you can\'t dig this tile. '),nl;
     tile(X,Y,C),
-    asserta(tile(X,Y,'=')), !.
+    assertz(tile(X,Y,'=')), !.
 % entah kenapa P nya ketutupan sama =   
 
 plant :-
