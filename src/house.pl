@@ -1,6 +1,6 @@
 % Dev dependencies
-:- include('time.pl').
-:- include('list_utils.pl').
+% :- include('time.pl').
+% :- include('list_utils.pl').
 
 dynamic(diaryEntries/1).
 

@@ -12,6 +12,11 @@ specialties([farming, fishing, ranching]).
 % "L is the list of available jobs in the game"
 jobs([fisherman, farmer, rancher]).
 
+% String representation
+define(fisherman, 'Fisherman').
+define(farmer, 'Farmer').
+define(rancher, 'Rancher').
+
 % define stats(J, L, S, E, G) as
 % Player's job is J
 % Player's level is L
@@ -19,6 +24,43 @@ jobs([fisherman, farmer, rancher]).
 % Player's exp is E
 % Player's gold is G
 :- dynamic(stats/5).
+
+% I.S. stats(J, L, S, E, G) is true for some J, L, S, E, G
+% F.S. Displayed player statistics to the console
+status :- 
+    stats(J, L, S, E, G),
+    write('Your status:\n'),
+    define(J, Job),
+    write('Job: '),
+    write(Job),
+    nl,
+    write('Level: '),
+    write(L),
+    nl,
+    write('Exp: '),
+    write(E),
+    nl,
+    % TODO: Add exp goal 
+    write('Gold: '),
+    write(G),
+    nl.
+
+% I.S. status called
+% F.S. Displayed player specialties statistics
+displaySpecialtiesStats([]) :- !.
+displaySpecialtiesStats(S) :-
+    S = [[Specialty, Level, Exp]|Sub],
+    write('Level '),
+    write(Specialty),
+    write(': '),
+    write(Level),
+    nl,
+    write('Exp '),
+    write(Specialty),
+    write(': '),
+    write(Exp),
+    nl,
+    displaySpecialtiesStats(Sub).
 
 % I.S. stats(J, L, S, E, G) is false for any J, L, S, E, G
 % F.S. stats(J, 1, S, 0, 0) is true for input J and specific S
