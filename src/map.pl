@@ -108,21 +108,21 @@ handleMove(X,Y) :-
     
 % I.S. Player position at (X,Y)
 % F.S. handleMove to East
-e :-
+d :-
     tile(X,Y,'P'),
     Y1 is Y+1,
     handleMove(X,Y1), !.
 
 % I.S. Player position at (X,Y)
 % F.S. handleMove to West
-w :-
+a :-
     tile(X,Y,'P'),
     Y1 is Y-1,
     handleMove(X,Y1), !.
 
 % I.S. Player position at (X,Y)
 % F.S. handleMove to North
-n :-
+w :-
     tile(X,Y,'P'),
     X1 is X-1,
     handleMove(X1,Y), !.
