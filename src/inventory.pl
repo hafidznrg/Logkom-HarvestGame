@@ -53,5 +53,35 @@ showInvHelper(List, X) :-
 	Y is X + 1,
 	showInvHelper(T, Y).
 
-% === TO DO ===
-% Add functionality to remove items from the list.
+% Helper function for removeFromInventory
+% removeX(List, X, Res)
+removeX([], _, []).
+removeX([X|T], X, T). 
+removeX([H|T], X, [H|Y]) :-
+  H \== X,
+  removeX(T, X, Y).
+
+% removeFromInventory(Item, Count) removes Item by Count.
+% If the item's count is exactly like Count, it will be removed from the list.
+removeFromInventory(Item, Count) :-
+  inventory(Inv),
+  invCount(Item, Count),
+  retract(invCount(Item, _)),
+  removeX(Inv, Item, NewInv),
+  itemName(Item, ItemName),
+  retract(inventory(_)),
+  assertz(inventory(NewInv)),
+  write('You have removed '), write(Count), write(' '), write(ItemName), write('(s) from your inventory!'), nl, !.
+% If Count < item's count, it will only decrease the count.
+removeFromInventory(Item, Count) :-
+  invCount(Item, ItemCount),
+  Count < ItemCount,
+  NewCount is ItemCount - Count,
+  itemName(Item, ItemName),
+  retract(invCount(Item, _)),
+  assertz(invCount(Item, NewCount)),
+  write('You have removed '), write(Count), write(' '), write(ItemName), write('(s) from your inventory!'), nl, !.
+% If both condition does not match, then the operation is valid.
+removeFromInventory(Item, _) :-
+  itemName(Item, ItemName),
+  write('You don\'t have enough '), write(ItemName), write('s.'), nl, !.
