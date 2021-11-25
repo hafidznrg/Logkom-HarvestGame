@@ -35,7 +35,6 @@ createMap :-
     write('Map has created.'), nl,
     asserta(map_size(15,20)),
     random(1,3,Num),
-    write(Num),
     (Num = 1 -> createMap1;
     Num = 2 -> createMap2).
 

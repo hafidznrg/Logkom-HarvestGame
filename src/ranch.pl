@@ -1,6 +1,7 @@
 % Dev dependencies
-:- include('time.pl').
-:- include('player.pl').
+% :- include('time.pl').
+% :- include('player.pl').
+% :- include('utils.pl').
 
 :- dynamic(lastHarvest/2).
 :- dynamic(count/2).
@@ -8,22 +9,35 @@
 
 % Define animals in ranch 
 animals([cow,sheep,chicken]).
-
-% Define count for each animals and its product
-count(cow,0).
-count(sheep,0).
-count(chicken,0).
-count(milk,0).
-count(wool,0).
-count(egg,0).
-
 produce(cow, milk).
 produce(sheep, wool).
 produce(chicken, egg).
 
-lastHarvest(cow,0).
-lastHarvest(sheep,0).
-lastHarvest(chicken,0).
+% DELETE THIS LATER
+% count(cow,0).
+% count(sheep,0).
+% count(chicken,0).
+% count(milk,0).
+% count(wool,0).
+% count(egg,0).
+% lastHarvest(cow,0).
+% lastHarvest(sheep,0).
+% lastHarvest(chicken,0).
+
+% Define count for each animals and its product
+% Initialize fact about Ranch
+initRanch :-
+    animals(ListCattle),
+    initCattle(ListCattle).
+
+% Initialize fact for all cattle
+initCattle([]).
+initCattle([Head|Tail]) :-
+    produce(Head,Product),
+    assertz(count(Head,0)),
+    assertz(count(Product,0)),
+    assertz(lastHarvest(Product,0)),
+    initCattle(Tail).
 
 % Testing
 % PLayer have cow and chicken
@@ -44,8 +58,8 @@ showBannerRanch :-
 handleRanch :- 
     showBannerRanch,
     ternak(ListTernak),
-    (isEmpty(ListTernak) -> write('You don\'t have any cattle.'), nl;
-    (\+ isEmpty(ListTernak)) -> write('   You have:'), nl,
+    (empty(ListTernak) -> write('You don\'t have any cattle.'), nl;
+    (\+ empty(ListTernak)) -> write('   You have:'), nl,
     showTernak(ListTernak),
     write('What do you want to do?'), nl,
     read(Hewan), !,
@@ -96,8 +110,8 @@ harvestRanch(Hewan) :-
 harvestThis(Hewan) :-
     produce(Hewan,Product),
     stats(J,L,_,_,_),
-    (J = rancher -> Base is (L//3)+1, Max is Base+3;
-    Base is 1, Max is 3),
+    (J = rancher -> Base is (L//3)+1, Max is Base+4;
+    Base is 1, Max is 4),
     random(Base,Max,Num),
     showResult(Num,Product),
     count(Product,Before),
@@ -109,17 +123,3 @@ harvestThis(Hewan) :-
 % F.S. Displayed message
 showResult(Num,Product) :-
     write('You got '), write(Num), write(' '), write(Product), (Num>1, write('s'), nl; nl).
-
-
-
-
-
-
-% list comprehension
-
-% isEmpty
-isEmpty(List) :- \+ (isMember(_,List)).
-
-% isMember
-isMember(E,[E|_]) :- !.
-isMember(E,[_|Tail]) :- isMember(E,Tail).

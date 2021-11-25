@@ -19,6 +19,12 @@ push([Head|Tail], E, Result) :-
     push(Tail, E, Subresult),
     Result = [Head|Subresult].
 
+
+% define isMember(E,L)
+% return true if E is in L
+isMember(E,[E|_]) :- !.
+isMember(E,[_|Tail]) :- isMember(E,Tail).
+
 % ------------------ IO UTILS ------------------
 
 % I.S. Any
