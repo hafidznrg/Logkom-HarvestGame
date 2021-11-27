@@ -47,3 +47,15 @@ stringify(Char, Stream, Str) :-
 % rewrite :-
 %     readLine(Str),
 %     write(Str).
+
+% ---------------- STRING UTILS ----------------
+% Convert number to string
+% Example : toString(100, X) yields X = '100'
+toString(Number, Str) :-
+    number_chars(Number, Chars),
+    charsToString(Chars, Str).
+
+charsToString([], '') :- !.
+charsToString([Char|SubList], Str) :-
+    charsToString(SubList, Substr),
+    atom_concat(Char, Substr, Str).

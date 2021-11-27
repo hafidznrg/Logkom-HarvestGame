@@ -1,11 +1,11 @@
 % Dev dependencies
-:- include('time.pl').
-:- include('player.pl').
+% :- include('time.pl').
+% :- include('player.pl').
 
 % List of fishes
 :- dynamic(fishes/1).
 % count(X, Y) means there are Y X's.
-:- dynamic(count/2).
+% :- dynamic(count/2).
 
 % Define what the valid fishes are.
 fish([akame, goldfish, tuna, carp]).
@@ -17,12 +17,32 @@ count(goldfish, 0).
 count(tuna, 0).
 count(carp, 0).
 
+% A predicate to get the players fishing level.
+getFishingLevel(X) :-
+	stats(_, _, S, _, _),
+	[_, F, _] = S,				% F berupa sebuah list untuk specialty Fisherman
+	[_, X, _] = F, !.			% Urutannya adalah [Specialty, Level, Exp]
+
+% Adds Amount to both fishing EXP and general EXP.
+addFishingExp(Amount) :-
+  stats(J, L, S, E, G),
+  [Farming, Fishing, Ranching] = S,
+  [Specialty, Level, Exp] = Fishing,
+  NewExp is Exp + Amount,
+  NewE is E + Amount,
+  NewS = [Farming, [Specialty, Level, NewExp], Ranching],
+  write('> Fishing experience added by '), write(Amount), write('!'), nl,
+  retract(stats(_,_,_,_,_)),
+  assertz(stats(J, L, NewS, NewE, G)), !.
+
 % Handle fish!
 % I.S. The player has a list of fishes
 % F.S. The list of fishes will be updated based on what the character fished.
 handleFish :-
-	random(1, 20, X),
+	getFishingLevel(FishLevel),
+	random(1, 20 - FishLevel, X),
 	getFish(X),
+  	work,
 	fishes(FishList),
 	write('=============================================='), nl,
 	write('These are the fishes that you currently have: '), nl,
@@ -48,7 +68,7 @@ getFish(4) :-
 	addFish(carp).
 
 getFish(_) :-
-		write('You failed to catch anything!'), nl, !.
+	write('You failed to catch anything!'), nl, !.
 
 % addFish(X) is a helper function for getFish(X).
 % Basically, it appends the fish to fishes if it isn't there yet,
@@ -60,7 +80,8 @@ addFish(X) :-
 	NewFishCount is FishCount + 1,
 	retract(count(X, _)),
 	assertz(count(X, NewFishCount)),
-	write('*** You caught a(n) '), write(X), write('!'), nl.
+	write('*** You caught a(n) '), write(X), write('!'), 
+  addFishingExp(10), nl.
 addFish(X) :-
 	fishes(FishList),
 	append(FishList, [X], NewFishList),
@@ -68,7 +89,8 @@ addFish(X) :-
 	assertz(count(X, 1)),
 	retract(fishes(_)),
 	assertz(fishes(NewFishList)),
-	write('*** You caught a(n) '), write(X), write('!'), nl.
+	write('*** You caught a(n) '), write(X), write('!'), 
+  addFishingExp(10), nl.
 
 % showFishes(List, Count) shows the list of fishes that the player have.
 showFishes([], 1) :-
@@ -80,6 +102,3 @@ showFishes(List, X) :-
 	write(X), write('. '), write(FishCount), write(' '), write(H), write('(s).'), nl,
 	Y is X + 1,
 	showFishes(T, Y).
-
-% === TO DO ===
-% Integrate it with player, i.e. add bonuses if the player is a fisher, XP stuffs, and more.

@@ -10,7 +10,7 @@ playerWorkingLimit(5).
 specialties([farming, fishing, ranching]).
 % define jobs(L) as
 % "L is the list of available jobs in the game"
-jobs([fisherman, farmer, rancher]).
+jobs([farmer, fisherman, rancher]).
 
 % String representation
 define(fisherman, 'Fisherman').
@@ -28,6 +28,7 @@ define(rancher, 'Rancher').
 % I.S. stats(J, L, S, E, G) is true for some J, L, S, E, G
 % F.S. Displayed player statistics to the console
 status :- 
+    gameStarted,
     stats(J, L, S, E, G),
     write('Your status:\n'),
     define(J, Job),
@@ -119,15 +120,15 @@ displayFaintMessage :-
     write('You wake up and it\'s the next day already.'),
     nextDay.
 
-% I.S. stats(_, _, _, _, Gold)
-% F.S. stats(_, _, _, _, Gold + Qty)
+% I.S. stats(J, L, S, E, Gold)
+% F.S. stats(J, L, S, E, Gold + Qty)
 addGold(Qty) :-
     retract(stats(J, L, S, E, Gold)),
     CurrentGold is Qty + Gold,
     asserta(stats(J, L, S, E, CurrentGold)).
 
-% I.S. stats(_, _, _, _, Gold)
-% F.S. stats(_, _, _, _, Gold - Qty)
+% I.S. stats(J, L, S, E, Gold)
+% F.S. stats(J, L, S, E, Gold - Qty)
 reduceGold(Qty) :-
     Qty_ is Qty * -1,
     addGold(Qty_).

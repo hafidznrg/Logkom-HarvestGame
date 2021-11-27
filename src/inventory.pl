@@ -1,10 +1,11 @@
 % Dev dependencies
-:- include('time.pl').
-:- include('player.pl').
+% :- include('time.pl').
+% :- include('player.pl').
 
 % Inventory list
 :- dynamic(inventory/1).
 % invCount(X, Y) means there are Y X's.
+% invCount(_, _)
 :- dynamic(invCount/2).
 
 % Specify names for item variables (to show when printing)

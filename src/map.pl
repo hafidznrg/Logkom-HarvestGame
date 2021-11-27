@@ -32,7 +32,6 @@ createMap2 :-
 % I.S. Initialize MAP
 % F.S. Map has created, initialize player position at House
 createMap :- 
-    write('Map has created.'), nl,
     asserta(map_size(15,20)),
     random(1,3,Num),
     (Num = 1 -> createMap1;
@@ -76,9 +75,10 @@ printTile(X,Y) :-
     (tile(X,Y,C), write(C), Y1 is Y+1, printTile(X,Y1);
     \+ tile(X,Y,_), write('-'), Y1 is Y+1, printTile(X,Y1)).
 
-% I.S. displayMap is called
+% I.S. map is called
 % F.S. Displayed Map
-displayMap :-
+map :-
+    gameStarted,
     write('[]==========================================[]'), nl,
     write('||                                          ||'), nl,
     write('||             Here\'s your Map              ||'), nl,
@@ -100,7 +100,7 @@ handleMove(X,Y) :-
 % Ranch, Farm, Marketplace, Quest, or Home; else call cantMove
 handleMove(X,Y) :-
     tile(X,Y,C),
-    ((C = 'R'; C = 'F'; C = 'M'; C = 'Q'; C = 'H'; C = ('=')),
+    ((C = 'R'; C = 'F'; C = 'M'; C = 'Q'; C = 'H'; C = ('='); C = 'r'; C = 't'; C = 'c'),
     retract(tile(_,_,'P')),
     asserta(tile(X,Y,'P'));
     cantMove).

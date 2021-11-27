@@ -1,5 +1,6 @@
 
-buyItem([tomatoo_seed, carrot_seed, corn_seed, potato_seed, chicken, shepp, cow, level_2_shovel, level_2_fishing_rod]).
+buyItem([tomato_seed, carrot_seed, corn_seed, potato_seed, chicken, sheep, cow, level_2_shovel, level_2_fishing_rod, level_3_shovel, level_3_fishing_rod]).
+item([level_2_shovel, level_2_fishing_rod, level_3_shovel, level_3_fishing_rod]).
 %  buy
 price(tomato_seed, 50).
 price(carrot_seed, 50).
@@ -19,7 +20,12 @@ price(milk, 1000).
 price(wool, 1500).
 
 % sell
-sell([tomatoo, caroot, corn, potato, egg, milk, wool]).
+sell([tomato, caroot, corn, potato, egg, milk, wool]).
+
+initItem([]).
+initItem([Head|Tail]) :-
+    assertz(count(Head,0)),
+    initPlant(Tail).
 
 showMenuBuy :-
     nl,
@@ -30,9 +36,10 @@ showMenuBuy :-
     write(' 4. Potato seed (50 golds)'), nl,
     write(' 5. Chicken (500 golds)'), nl,
     write(' 6. Sheep (1000 golds)'), nl,
-    write(' 7. Cow (1500 golds)'), nl,
-    write(' 8. Level 2 shovel (300 golds)'), nl,
-    write(' 9. Level 2 fishing rod (500 golds)'), nl,!.
+    write(' 7. Cow (1500 golds)'), nl,!.
+    % ganti
+    % write(' 8. Level 2 shovel (300 golds)'), nl,
+    % write(' 9. Level 2 fishing rod (500 golds)'), nl,!.
 
 % showMenuSell :-
 
@@ -55,8 +62,36 @@ showMenuMarket(buy) :-
     Price2 is Sum*Price,
     write(Price2),nl,
     stats(_, _, _, _, G),
-    (Price2 > G, write('Not enough gold')),nl;
+    (Price2 > G -> write('Not enough gold'),nl;
+    Option = 1 -> increaseSeed(carrot_seed), reduceGold(Price2);
+    Option = 2 -> increaseSeed(corn_seed), reduceGold(Price2);
+    Option = 3 -> increaseSeed(tomato_seed), reduceGold(Price2);
+    Option = 4 -> increaseSeed(potato_seed), reduceGold(Price2);
+    Option = 5 -> increaseAnimal(chicken), reduceGold(Price2);
+    Option = 6 -> increaseAnimal(sheep), reduceGold(Price2);
+    Option = 7 -> increaseAnimal(cow), reduceGold(Price2);
+    count(Y, Sum0),
+    Sum1 is Sum + Sum0,
     retract(count(Y, Sum0)),
-    asserta(count(Y, Sum)).
-    
+    asserta(count(Y, Sum1)),
+    reduceGold(Price2)), !.
     % G1 is G - Price2, !.
+
+showMenuMarket(sell) :-
+    showInventory,
+    write('What do you want to sell?'), nl,
+    read(Option),
+    inventory(Inventory),
+    getElem(Inventory, Option, Item),
+    ('How many do you want to sell? '),
+    read(Sell),
+    count(Item, Y),
+    (Sell > Y -> write('not enough item, canceling...'),nl; 
+    Y1 is Y - Sell,
+    retract(count(Item, Y)),
+    asserta(count(Item, Y1)),
+    price(Item, X),
+    Price2 is X*Sell,
+    addGold(Price2)), !.
+
+%   startGame. start. 1.

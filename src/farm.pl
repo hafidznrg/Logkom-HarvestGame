@@ -32,7 +32,7 @@ seed([corn_seed,tomato_seed, carrot_seed]).
 initPlant([]).
 initPlant([Head|Tail]) :-
     produces(Head, Product),
-    assertz(count(Head,1)),
+    assertz(count(Head,0)),
     assertz(count(Product,0)),
     initPlant(Tail).
 
@@ -68,6 +68,7 @@ handleFarm :-
     showSeed(ListSeed),
     write('What do you want to plant?'), nl,
     plantproduce(ListPlant), 
+    write('>>> '),
     read(Plant),
     (isMember(Plant,ListPlant) -> plant(Plant), !;
     write('Oops. You can\'t choose this command.'), nl)), !. 
@@ -194,7 +195,8 @@ harvestPlant(Plant) :-
     tile(XTile,YTile,'P'),
     retract(tile(XTile,YTile,'P')),
     retract(tile(XTile,YTile,'c')),
-    asserta(tile(XTile,YTile,'P')),!.
+    asserta(tile(XTile,YTile,'P')),
+    write('You harvested '), write(X1) ,write(' corn'),nl, !.
 
 harvestPlant(Plant) :-
     carrotSeed(ListCarrot),
@@ -206,7 +208,8 @@ harvestPlant(Plant) :-
     random(Base,Max,Num),
     X1 is X+Num,
     retract(count(carrot,_)),
-    asserta(count(carrot, X1)),!.
+    asserta(count(carrot, X1)),
+    write('You harvested '), write(X1) ,write(' carrot'),nl, !.
 
 harvestPlant(Plant) :-
     tomatoSeed(ListTomato),
@@ -218,7 +221,8 @@ harvestPlant(Plant) :-
     random(Base,Max,Num),
     X1 is X+Num,
     retract(count(tomato,_)),
-    asserta(count(tomato, X1)),!.
+    asserta(count(tomato, X1)),
+    write('You harvested '), write(X1) ,write(' tomato'),nl, !.
 
 
 % retractall(count(tomato_seed,X)).
@@ -227,3 +231,15 @@ harvestPlant(Plant) :-
 % asserta(count(corn_seed,5)).
 % retractall(count(carrot_seed,X)).
 % asserta(count(carrot_seed,5)).
+
+
+increaseSeed(Seed) :-
+    count(Seed, Before),
+    After is Before+1,
+    seed(ListSeed),
+    (\+ isMember(Seed, ListSeed), 
+    push(ListSeed, Seed, NewList),
+    retract(seed(ListSeed)),
+    assertz(seed(NewList)); !),
+    retract(count(Seed,Before)),
+    assertz(count(Seed,After)).

@@ -42,7 +42,7 @@ initCattle([Head|Tail]) :-
 % Testing
 % PLayer have cow and chicken
 % Edit count
-ternak([cow,chicken]).
+ternak([]).
 
 % I.S. showBannerRanch is called
 % F.S. Displayed banner
@@ -109,8 +109,8 @@ harvestRanch(Hewan) :-
 % F.S. RNG to get random number of product
 harvestThis(Hewan) :-
     produce(Hewan,Product),
-    stats(J,L,_,_,_),
-    (J = rancher -> Base is (L//3)+1, Max is Base+4;
+    stats(J,_,S,_,_),
+    (J = rancher -> getRanchLevel(S,J,L), Base is (L//3)+1, Max is Base+4;
     Base is 1, Max is 4),
     random(Base,Max,Num),
     showResult(Num,Product),
@@ -119,7 +119,25 @@ harvestThis(Hewan) :-
     retract(count(Product,Before)),
     assertz(count(Product,After)).
 
+getRanchLevel([],_,0) :- !.
+getRanchLevel([[Specialty, Level, _] | Tail], Job, X) :-
+    (Job = Specialty -> X is Level;
+    getRanchLevel(Tail,Job,X)).
+    
+
 % I.S. -
 % F.S. Displayed message
 showResult(Num,Product) :-
     write('You got '), write(Num), write(' '), write(Product), (Num>1, write('s'), nl; nl).
+
+% I.S -
+% F.S add animal to list ternak
+increaseAnimal(Hewan) :-
+    count(Hewan, Before),
+    After is Before+1,
+    ternak(ListTernak),
+    (\+ isMember(Hewan, ListTernak), push(ListTernak,Hewan,NewList),
+    retract(ternak(ListTernak)),
+    assertz(ternak(NewList)); !),
+    retract(count(Hewan,Before)),
+    assertz(count(Hewan,After)).
