@@ -4,11 +4,14 @@
 :- include('market.pl').
 :- include('utils.pl').
 :- include('quest.pl').
-
+:- include('time.pl').
+:- include('player.pl').
+:- include('house.pl').
 start :- 
     initStats(rancher),
     initLimit,
     initDiaryEntries,
+    initFarm,
     assertz(onQuest(false)),
     createMap.
     
@@ -21,7 +24,7 @@ dig :-
     tile(X,Y,'P'),
     (
         tile(X,Y,C),
-        (C = 'R'; C = 'F'; C = 'M'; C = 'Q'; C = 'H')
+        (C = 'R'; C = 'F'; C = 'M'; C = 'Q'; C = 'H'; C = 'c'; C = 't'; C = 'r')
     )
         -> 
         (
@@ -50,3 +53,7 @@ quest :-
     tile(X,Y,'P'),
     (tile(X,Y,'Q') -> handleQuest;
     write('You need to go to the ?? first.')), !.
+
+harvest :-
+    tile(X, Y, 'P'),
+    handleHarvest(X, Y),!.
