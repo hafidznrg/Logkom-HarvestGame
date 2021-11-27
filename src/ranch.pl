@@ -6,6 +6,7 @@
 :- dynamic(lastHarvest/2).
 :- dynamic(count/2).
 :- dynamic(ternak/1).
+:- dynamic(increaseAnimal/1).
 
 % Define animals in ranch 
 animals([cow,sheep,chicken]).
@@ -132,9 +133,9 @@ showResult(Num,Product) :-
 
 % I.S -
 % F.S add animal to list ternak
-increaseAnimal(Hewan) :-
+increaseAnimal(Hewan, Add) :-
     count(Hewan, Before),
-    After is Before+1,
+    After is Before+Add,
     ternak(ListTernak),
     (\+ isMember(Hewan, ListTernak), push(ListTernak,Hewan,NewList),
     retract(ternak(ListTernak)),

@@ -23,6 +23,7 @@ start :-
     asserta(gameStarted),
     initLimit,
     initDiaryEntries,
+    initRanch,
     initFarm,
     assertz(onQuest(false)),
     createMap,

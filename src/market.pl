@@ -63,13 +63,13 @@ showMenuMarket(buy) :-
     write(Price2),nl,
     stats(_, _, _, _, G),
     (Price2 > G -> write('Not enough gold'),nl;
-    Option = 1 -> increaseSeed(carrot_seed), reduceGold(Price2);
-    Option = 2 -> increaseSeed(corn_seed), reduceGold(Price2);
-    Option = 3 -> increaseSeed(tomato_seed), reduceGold(Price2);
-    Option = 4 -> increaseSeed(potato_seed), reduceGold(Price2);
-    Option = 5 -> increaseAnimal(chicken), reduceGold(Price2);
-    Option = 6 -> increaseAnimal(sheep), reduceGold(Price2);
-    Option = 7 -> increaseAnimal(cow), reduceGold(Price2);
+    Option = 1 -> increaseSeed(carrot_seed, Sum), reduceGold(Price2);
+    Option = 2 -> increaseSeed(corn_seed, Sum), reduceGold(Price2);
+    Option = 3 -> increaseSeed(tomato_seed, Sum), reduceGold(Price2);
+    Option = 4 -> increaseSeed(potato_seed, Sum), reduceGold(Price2);
+    Option = 5 -> increaseAnimal(chicken, Sum), reduceGold(Price2);
+    Option = 6 -> increaseAnimal(sheep, Sum), reduceGold(Price2);
+    Option = 7 -> increaseAnimal(cow, Sum), reduceGold(Price2);
     count(Y, Sum0),
     Sum1 is Sum + Sum0,
     retract(count(Y, Sum0)),
