@@ -56,4 +56,6 @@ quest :-
 
 harvest :-
     tile(X, Y, 'P'),
-    handleHarvest(X, Y),!.
+    (tile(X,Y,C),
+    (C = 'c'; C = 't'; C = 'r') -> handleHarvest(X, Y);
+    write('can\'t harvest this tile')), !.

@@ -1,19 +1,18 @@
 :- dynamic(lastHarvestSeed/2).
-:- dynamic(countSeed/2).
-:- dynamic(countPlant/2).
+:- dynamic(count/2).
 :- dynamic(seed/1).
 :- dynamic(seedTile/3).
 
 seeds([corn_seed,tomato_seed,carrot_seed]).
 
-% Define countSeed for each plant and seed
-% countSeed(corn,0).
-% countSeed(tomato,0).
-% countSeed(carrot,0).
+% Define count for each plant and seed
+% count(corn,0).
+% count(tomato,0).
+% count(carrot,0).
 
-% countSeed(corn_seed,0).
-% countSeed(tomato_seed,0).
-% countSeed(carrot_seed,0).
+% count(corn_seed,0).
+% count(tomato_seed,0).
+% count(carrot_seed,0).
 
 plantproduce([corn, tomato, carrot]).
 
@@ -33,8 +32,8 @@ seed([corn_seed,tomato_seed, carrot_seed]).
 initPlant([]).
 initPlant([Head|Tail]) :-
     produces(Head, Product),
-    assertz(countSeed(Head,1)),
-    assertz(countPlant(Product,0)),
+    assertz(count(Head,1)),
+    assertz(count(Product,0)),
     initPlant(Tail).
 
 initCorn([]).
@@ -77,27 +76,27 @@ handleFarm :-
 showSeed([]) :- !.
 
 showSeed([Head|Tail]) :-
-    countSeed(Head,X),
+    count(Head,X),
     (X>0, write('     - '), write(X), write('  '), write(Head), nl; nl),
     showSeed(Tail).
 
 
 plant(Plant) :-
     produces(Y, Plant),
-    countSeed(Y, Count),
+    count(Y, Count),
     Count = 0, 
     write('not enough seeds to plant'),nl, !.
 
 
 plant(Plant) :-
     produces(Seed, Plant),
-    countSeed(Seed, Count),
+    count(Seed, Count),
     Count > 0,
     Counta is Count - 1,
     plantSeed(Seed),
     produces(Seed, Plant),
-    retract(countSeed(Seed, Count)),
-    assertz(countSeed(Seed,Counta)),
+    retract(count(Seed, Count)),
+    assertz(count(Seed,Counta)),
     write('you planted a '),write(Plant) ,write(' seed'), nl,
     !.
     % retract(tile(X,Y,'P')),
@@ -157,7 +156,7 @@ handleSeed([Head| Tail], Corn) :-
 
 isempty([]).
 isempty([Head|Tail]) :-
-    countSeed(Head, X),
+    count(Head, X),
     (X = 0 -> isempty(Tail), !;
     fail).
 
@@ -168,7 +167,9 @@ handleHarvest(X, Y) :-
     Day > DayPlant + 5, !,
     harvestPlant(Plant),
     retract(lastHarvestSeed(Plant,DayPlant)),
-    asserta(lastHarvestSeed(Plant,0)), !.
+    asserta(lastHarvestSeed(Plant,0)),
+    retract(seedTile(X,Y,Seed)),
+    asserta(seedTile(0,0,Seed)), !.
 
 handleHarvest(X, Y) :-
     seedTile(X,Y,Plant),
@@ -182,45 +183,47 @@ handleHarvest(X, Y) :-
 harvestPlant(Plant) :-
     cornSeed(ListCorn),
     isMember(Plant, ListCorn),
-    countPlant(corn, X),
+    count(corn, X),
     stats(J,L,_,_,_),
     (J = farmer -> Base is (L//3)+1, Max is Base+4;
     Base is 1, Max is 4),
     random(Base,Max,Num),
     X1 is X+Num,
-    retract(countPlant(corn,_)),
-    asserta(countPlant(corn, X1)),
+    retract(count(corn,_)),
+    asserta(count(corn, X1)),
     tile(XTile,YTile,'P'),
     retract(tile(XTile,YTile,'P')),
     retract(tile(XTile,YTile,'c')),
-    asserta(tile(XTile,YTile,'P')), !.
+    asserta(tile(XTile,YTile,'P')),!.
 
 harvestPlant(Plant) :-
     carrotSeed(ListCarrot),
     isMember(Plant, ListCarrot), 
-    countPlant(carrot, X),
+    count(carrot, X),
     stats(J,L,_,_,_),
     (J = farmer -> Base is (L//3)+1, Max is Base+4;
     Base is 1, Max is 4),
     random(Base,Max,Num),
     X1 is X+Num,
-    retract(countPlant(carrot,_)),
-    asserta(countPlant(carrot, X1)), !.
+    retract(count(carrot,_)),
+    asserta(count(carrot, X1)),!.
 
 harvestPlant(Plant) :-
     tomatoSeed(ListTomato),
-    countPlant(tomato, X),
+    count(tomato, X),
     isMember(Plant, ListTomato),
     stats(J,L,_,_,_),
     (J = farmer -> Base is (L//3)+1, Max is Base+4;
     Base is 1, Max is 4),
     random(Base,Max,Num),
     X1 is X+Num,
-    retract(countPlant(tomato,_)),
-    asserta(countPlant(tomato, X1)), !.
-% retractall(countSeed(tomato_seed,X)).
-% asserta(countSeed(tomato_seed,5)).
-% retractall(countSeed(corn_seed,X)).
-% asserta(countSeed(corn_seed,5)).
-% retractall(countSeed(carrot_seed,X)).
-% asserta(countSeed(carrot_seed,5)).
+    retract(count(tomato,_)),
+    asserta(count(tomato, X1)),!.
+
+
+% retractall(count(tomato_seed,X)).
+% asserta(count(tomato_seed,5)).
+% retractall(count(corn_seed,X)).
+% asserta(count(corn_seed,5)).
+% retractall(count(carrot_seed,X)).
+% asserta(count(carrot_seed,5)).
