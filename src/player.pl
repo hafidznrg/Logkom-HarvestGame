@@ -40,6 +40,7 @@ status :-
     write('Exp: '),
     write(E),
     nl,
+    displaySpecialtiesStats(S),
     % TODO: Add exp goal 
     write('Gold: '),
     write(G),
@@ -118,4 +119,15 @@ displayFaintMessage :-
     write('You wake up and it\'s the next day already.'),
     nextDay.
 
-    
+% I.S. stats(_, _, _, _, Gold)
+% F.S. stats(_, _, _, _, Gold + Qty)
+addGold(Qty) :-
+    retract(stats(J, L, S, E, Gold)),
+    CurrentGold is Qty + Gold,
+    asserta(stats(J, L, S, E, CurrentGold)).
+
+% I.S. stats(_, _, _, _, Gold)
+% F.S. stats(_, _, _, _, Gold - Qty)
+reduceGold(Qty) :-
+    Qty_ is Qty * -1,
+    addGold(Qty_).
