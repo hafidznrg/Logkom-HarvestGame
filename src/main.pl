@@ -23,6 +23,7 @@ start :-
     asserta(gameStarted),
     initLimit,
     initDiaryEntries,
+    initRanch,
     initFarm,
     assertz(onQuest(false)),
     createMap,
@@ -37,13 +38,13 @@ start :-
     , !. 
 
 welcomeMessage(Job) :-
-    write('You choose '), write(Job), write('. let\'s start farming').
+    write('You chose '), write(Job), write('. Let\'s start farming'), nl.
 
 ranch :- 
     gameStarted,
     tile(X,Y,'P'),
     (tile(X,Y,'R') -> handleRanch;
-    write('You need to go to the Ranch first.')), !.
+    write('You need to go to the Ranch first.'), nl), !.
 
 dig :-
     gameStarted,
@@ -54,7 +55,7 @@ dig :-
     )
         -> 
         (
-            write('you can\'t dig this tile. '),
+            write('You can\'t dig this tile. '),
             nl
         );
         (
@@ -69,27 +70,34 @@ plant :-
     gameStarted,
     tile(X,Y,'P'),
     (tile(X,Y,'=') -> handleFarm; 
-    write('You need to go to the farm field or dig the tile first')), !.
+    write('You need to go to the farm field or dig the tile first'), nl), !.
 
 market :-
     gameStarted,
     tile(X,Y,'P'),
     (tile(X,Y,'M') -> handleMarket;
-    write('You need to go to the Market first.')), !.
+    write('You need to go to the Market first.'), nl), !.
 
 quest :-
     gameStarted,
     tile(X,Y,'P'),
     (tile(X,Y,'Q') -> handleQuest;
-    write('You need to go to the ?? first.')), !.
+    write('You need to go to the ?? first.'), nl), !.
 
 harvest :-
     gameStarted,
     tile(X, Y, 'P'),
     (tile(X,Y,C),
     (C = 'c'; C = 't'; C = 'r') -> handleHarvest(X, Y);
-    write('can\'t harvest this tile')), !.
+    write('You can\'t harvest this tile'), nl), !.
 
+fish :-
+    gameStarted,
+    isNearPond,
+    handleFish, !.
+fish :-
+    gameStarted, 
+    write('You can\'t fish here!'), nl, !.
 
 showMenu :-
     write('  _   _                           _   '), nl,

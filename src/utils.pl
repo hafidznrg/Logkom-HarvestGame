@@ -55,7 +55,22 @@ toString(Number, Str) :-
     number_chars(Number, Chars),
     charsToString(Chars, Str).
 
+% Joins a list of characters to a string
+% Example : charsToString(['a', 'b', 'c'], S)
+% yields S = 'abc'
 charsToString([], '') :- !.
 charsToString([Char|SubList], Str) :-
     charsToString(SubList, Substr),
     atom_concat(Char, Substr, Str).
+
+% ---------------- EFFECT UTILS ----------------
+typewrite(String, Seconds) :-
+    atom_chars(String, Chars),
+    typewriteRec(Chars, Seconds).
+    
+typewriteRec([], _) :- !.
+typewriteRec([Char|Substr], Seconds) :-
+    write(Char),
+    flush_output,
+    sleep(Seconds),
+    typewriteRec(Substr, Seconds).

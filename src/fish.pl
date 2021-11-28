@@ -7,6 +7,44 @@
 % count(X, Y) means there are Y X's.
 % :- dynamic(count/2).
 
+% A predicate to check whether the player is near a pond or not.
+isNearPond :-
+	tile(X, Y, 'P'),
+	X1 is X + 1,
+	tile(X1, Y, 'o'), !.
+isNearPond :-
+	tile(X, Y, 'P'),
+	X1 is X - 1,
+	tile(X1, Y, 'o'), !.
+isNearPond :-
+	tile(X, Y, 'P'),
+	Y1 is Y + 1,
+	tile(X, Y1, 'o'), !.
+isNearPond :-
+	tile(X, Y, 'P'),
+	Y1 is Y - 1,
+	tile(X, Y1, 'o'), !.
+isNearPond :-
+	tile(X, Y, 'P'),
+	X1 is X + 1,
+	Y1 is Y + 1,
+	tile(X1, Y1, 'o'), !.
+isNearPond :-
+	tile(X, Y, 'P'),
+	X1 is X - 1,
+	Y1 is Y + 1,
+	tile(X1, Y1, 'o'), !.
+isNearPond :-
+	tile(X, Y, 'P'),
+	X1 is X - 1,
+	Y1 is Y - 1,
+	tile(X1, Y1, 'o'), !.
+isNearPond :-
+	tile(X, Y, 'P'),
+	X1 is X + 1,
+	Y1 is Y - 1,
+	tile(X1, Y1, 'o'), !.
+
 % Define what the valid fishes are.
 fish([akame, goldfish, tuna, carp]).
 
@@ -32,6 +70,8 @@ addFishingExp(Amount) :-
   NewE is E + Amount,
   NewS = [Farming, [Specialty, Level, NewExp], Ranching],
   write('> Fishing experience added by '), write(Amount), write('!'), nl,
+	write('> Current fishing level: '), write(Level), nl,
+	write('> Current fishing EXP: '), write(NewE), nl,
   retract(stats(_,_,_,_,_)),
   assertz(stats(J, L, NewS, NewE, G)), !.
 
@@ -40,14 +80,15 @@ addFishingExp(Amount) :-
 % F.S. The list of fishes will be updated based on what the character fished.
 handleFish :-
 	getFishingLevel(FishLevel),
-	random(1, 20 - FishLevel, X),
+	RNGBound is 20 - FishLevel,
+	random(1, RNGBound, X),
 	getFish(X),
-  	work,
 	fishes(FishList),
 	write('=============================================='), nl,
 	write('These are the fishes that you currently have: '), nl,
 	showFishes(FishList, 1), 
-	write('=============================================='), nl, !.
+	write('=============================================='), nl,
+  work, !.
 
 % getFish(X) will add different values to the list of fishes based on X.
 % X = 1 -> akame
@@ -80,8 +121,8 @@ addFish(X) :-
 	NewFishCount is FishCount + 1,
 	retract(count(X, _)),
 	assertz(count(X, NewFishCount)),
-	write('*** You caught a(n) '), write(X), write('!'), 
-  addFishingExp(10), nl.
+	write('*** You caught a(n) '), write(X), write('!'),  nl,
+  addFishingExp(10), !.
 addFish(X) :-
 	fishes(FishList),
 	append(FishList, [X], NewFishList),
@@ -89,8 +130,8 @@ addFish(X) :-
 	assertz(count(X, 1)),
 	retract(fishes(_)),
 	assertz(fishes(NewFishList)),
-	write('*** You caught a(n) '), write(X), write('!'), 
-  addFishingExp(10), nl.
+	write('*** You caught a(n) '), write(X), write('!'), nl,
+  addFishingExp(10), !.
 
 % showFishes(List, Count) shows the list of fishes that the player have.
 showFishes([], 1) :-

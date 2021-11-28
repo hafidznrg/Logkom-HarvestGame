@@ -236,9 +236,9 @@ harvestPlant(Plant) :-
 % asserta(count(carrot_seed,5)).
 
 
-increaseSeed(Seed) :-
+increaseSeed(Seed, Add) :-
     count(Seed, Before),
-    After is Before+1,
+    After is Before+Add,
     seed(ListSeed),
     (\+ isMember(Seed, ListSeed), 
     push(ListSeed, Seed, NewList),

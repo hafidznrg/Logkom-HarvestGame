@@ -14,11 +14,20 @@ nextDay :-
     retract(day(Day)),
     NextDay is Day + 1,
     asserta(day(NextDay)),
+    displayDayMessage,
     (Day is 366 -> lose; !).
+
+% I.S. nextDay called
+% F.S. Displayed day message to the console.
+displayDayMessage :-
+    day(D),
+    write('Day '),
+    write(D).
 
 % I.S. day(366)
 % F.S. Player loses the game.
 lose :-
     write('You have worked hard, but in the end result is all that matters'),
     nl,
-    write('May God bless you in the future with kind people!').
+    write('May God bless you in the future with kind people!'),
+    nl.

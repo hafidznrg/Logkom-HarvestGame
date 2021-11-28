@@ -4,7 +4,7 @@
 % Constants
 % define playerWorkingLimit(X) as
 % "Player can work for X times before they fainted."
-playerWorkingLimit(5).
+playerWorkingLimit(10).
 % define specialites(L) as
 % "L is the list of available specialites in the game"
 specialties([farming, fishing, ranching]).
@@ -110,6 +110,9 @@ faint :-
 % I.S. faint called
 % F.S. Displayed player faint message
 displayFaintMessage :-
+    nl, 
+    write('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'), 
+    nl,
     write('You worked too much for today and passed out.'),
     nl,
     playerWorkingLimit(L),
@@ -118,6 +121,9 @@ displayFaintMessage :-
     write(' activities daily.'),
     nl,
     write('You wake up and it\'s the next day already.'),
+    nl,
+    write('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'),
+    nl,
     nextDay.
 
 % I.S. stats(J, L, S, E, Gold)
