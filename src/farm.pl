@@ -2,6 +2,8 @@
 :- dynamic(count/2).
 :- dynamic(seed/1).
 :- dynamic(seedTile/3).
+:- dynamic(limitFarm/1).
+
 
 seeds([corn_seed,tomato_seed,carrot_seed]).
 
@@ -45,6 +47,7 @@ initCorn([Head1|Tail1]) :-
 
 initFarm :-
     seeds(ListSeed),
+    assertz(limitFarm(0)),
     cornSeed(ListCorn),
     carrotSeed(ListCarrot),
     tomatoSeed(ListTomato),
@@ -99,7 +102,7 @@ plant(Plant) :-
     retract(count(Seed, Count)),
     assertz(count(Seed,Counta)),
     write('you planted a '),write(Plant) ,write(' seed'), nl,
-    !.
+    workFarm, !.
     % retract(tile(X,Y,'P')),
     % asserta(tile(X,Y,'F')),
     % asserta(tile(X,Y,'P')),
@@ -165,7 +168,7 @@ handleHarvest(X, Y) :-
     seedTile(X,Y,Plant),
     day(Day),
     lastHarvestSeed(Plant,DayPlant),
-    Day > DayPlant + 5, !,
+    Day > DayPlant + 2, !,
     harvestPlant(Plant),
     retract(lastHarvestSeed(Plant,DayPlant)),
     asserta(lastHarvestSeed(Plant,0)),
@@ -176,7 +179,7 @@ handleHarvest(X, Y) :-
     seedTile(X,Y,Plant),
     day(Day),
     lastHarvestSeed(Plant,DayPlant),
-    Day =< DayPlant+5,
+    Day =< DayPlant+2,
     write('Your seed not ready to harvest '),nl,
     write('Please check again later.'), nl,!.
 
@@ -243,3 +246,12 @@ increaseSeed(Seed) :-
     assertz(seed(NewList)); !),
     retract(count(Seed,Before)),
     assertz(count(Seed,After)).
+
+workFarm :-
+    limitFarm(Limit),
+    retract(limitFarm(_)),
+    X1 is Limit +1,
+    assertz(limitFarm(X1)),
+    (X1 = 3 -> work;
+    X1 > 3 -> retract(limitFarm(_)),assertz(limitFarm(0));
+    write('')), !.
