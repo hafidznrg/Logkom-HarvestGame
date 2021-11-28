@@ -17,19 +17,23 @@ house :-
     tile(X, Y, 'H'),
     write('What do you want to do ?\n'),
     write('- sleep\n'),
-    write('- writeDiary\n'),
-    write('- readDiary\n'),
+    write('- write [diary]\n'),
+    write('- read [diary]\n'),
     write('- exit\n\n'),
+    repeat,
     write('>>> '),
     readLine(Cmd),
     nl,
     (
         (Cmd = 'sleep', sleepHandler, !);
-        (Cmd = 'readDiary', readDiaryHandler, !);
-        (Cmd = 'writeDiary', writeDiaryHandler, !);
+        (Cmd = 'read', readDiaryHandler, !);
+        (Cmd = 'read diary', readDiaryHandler, !);
+        (Cmd = 'write', writeDiaryHandler, !);
+        (Cmd = 'write diary', writeDiaryHandler, !);
         (Cmd = 'exit', !);
-        house
-    ).
+        write('Invalid choice !')
+    )
+    .
 house :-
     gameStarted,
     write('You are not currently in your house!'),
@@ -40,14 +44,19 @@ house :-
 sleepHandler :-
     write('You went to sleep.\n\n'),
     nextDay,
-    day(D),
-    write('Day '),
-    write(D),
+    retract(limit(_)),
+    playerWorkingLimit(L),
+    asserta(limit(L)),
     nl.
-% TODO: Display weather mechanism message
 
 % I.S. Diary entries may be empty
-% F.S. Added an entry to diary entries 
+% F.S. Added an entry to diary entries
+writeDiaryHandler :-
+    day(Day),
+    diaryEntries(Entries),
+    hasWriteDiary(Entries, Day),
+    write('You have written your diary for today!'),
+    !.
 writeDiaryHandler :-
     day(Day),
     write('Write your diary for Day '),
@@ -60,19 +69,25 @@ writeDiaryHandler :-
     write('Day '),
     write(Day),
     write(' entry saved.'),
-    save.
-% readLine func dari gprolog?
+    save,
+    !.
+
 % I.S. Any
 % F.S. Displayed diary entry at some day
 readDiaryHandler :-
     diaryEntries(Entries),
     (
         empty(Entries) -> write('You haven\'t written any diary yet.');
+        write('Which diary entry do you wish to read ?'),
+        nl,
         displayDiaryEntries(Entries),
+        write('>>> '),
         read_integer(Day),
         (
             validDiaryDay(Entries, Day)
-                -> showDiaryEntry(Entries, Day);
+                -> showDiaryEntry(Entries, Day),
+                    nl,
+                    loadData(Day), !;
             write('Invalid day !')
         )
     ).
@@ -103,7 +118,7 @@ showDiaryEntry(Entries, Day) :-
     Entries = [Entry|SubEntries],
     (
         Entry = [Day, Writing]
-            -> write(Writing);
+            -> (write(Writing), nl, !);
         showDiaryEntry(SubEntries, Day)
     ).
 
@@ -115,6 +130,17 @@ pushDiaryEntry(Entry) :-
     retract(diaryEntries(_)),
     asserta(diaryEntries(NewEntries)).
 
+% define hasWriteDiary(E, D) as
+% "Player has write a diary entry for day D in
+% diary entries E"
+hasWriteDiary([], _) :- !, fail.
+hasWriteDiary([Entry|SubEntries], Day) :-
+    (
+        Entry = [Day, _]
+            -> !;
+        hasWriteDiary(SubEntries, Day)
+    ).
+
 % I.S. writeDiaryHandler called
 % F.S. Saved current state
 save :-
@@ -123,6 +149,8 @@ save :-
     atom_concat('save_data/', Day, Base),
     atom_concat(Base, '.pl', Filename),
     open(Filename, write, Stream),
+    write(Stream, ':- dynamic(loadAll/0).\n'),
+    write(Stream, 'loadAll :-\n'),
 
     diaryEntries(Entries),
     writeSaveData(Stream, diaryEntries(Entries)),
@@ -166,8 +194,9 @@ save :-
 
     writeSaveData(Stream, day(DayInt)),
 
-    close(Stream), !.
-save :- !.
+    write(Stream, '  !.\n'),
+
+    close(Stream).
 
 saveCount(Stream) :-
     current_predicate(count/2),
@@ -218,35 +247,100 @@ saveQuest(Stream) :-
 saveQuest(_) :- !.
 
 writeSaveDataLoop(Stream, Term) :-
+    write(Stream, '  assertz('),
     write_term(Stream, Term, [quoted(true)]),
-    write(Stream, '.\n'),
+    write(Stream, '),\n'),
     fail.
 
-    
-
 writeSaveData(Stream, Term) :-
+    write(Stream, '  assertz('),
     write_term(Stream, Term, [quoted(true)]),
-    write(Stream, '.\n').
+    write(Stream, '),\n').
 
-load :-
-    consult('save_data/1.pl').
+% I.S. readDiaryHandler called
+% F.S. Loaded saved state
+loadData(Day) :-
+    retractall(diaryEntries(_)),
+    (
+        current_predicate(lastHarvestSeed/2) ->
+        retractall(lastHarvestSeed(_, _))
+    ),
+    (
+        current_predicate(count/2) ->
+        retractall(count(_, _))
+    ),
+    (
+        current_predicate(seed/1) ->
+        retractall(seed(_))
+    ),
+    (
+        current_predicate(seedTile/3) ->
+        retractall(seedTile(_, _, _))
+    ),
+    (
+        current_predicate(invCount/2) ->
+        retractall(invCount(_, _))
+    ),
+    (
+        current_predicate(tile/3) ->
+        retractall(tile(_, _, _))
+    ),
+    retractall(fishes(_)),
+    retractall(inventory(_)),
+    retractall(map_size(_)),
+    retractall(stats(_, _, _, _, _)),
+    retractall(limit(_)),
+    retractall(onQuest(_)),
+    (
+        current_predicate(quest/3) ->
+        retractall(quest(_, _, _))
+    ),
+    (
+        current_predicate(lastHarvest/2) ->
+        retractall(lastHarvest(_, _))
+    ),
+    retractall(ternak(_)),
+    retractall(day(_)),
+    toString(Day, DayStr),
+    atom_concat('save_data/', DayStr, Base),
+    atom_concat(Base, '.pl', Filename),
+    write('--------------------------\n'),
+    consult(Filename),
+    write('--------------------------\n'),
+    loadAll,
+    abolish(loadAll/0),
+    nl,
+    displayLoadMessage,
+    displayDayMessage,
+    !.
 
-
-% :- dynamic(count/2).
-% :- dynamic(seed/1).
-% :- dynamic(seedTile/3).
-% :- dynamic(fishes/1).
-% :- dynamic(diaryEntries/1).
-% :- dynamic(inventory/1).
-% :- dynamic(invCount/2).
-% :- dynamic(gameStarted/0).
-% :- dynamic(gameLoaded/0).
-% :- dynamic(tile/3).
-% :- dynamic(map_size/2).
-% :- dynamic(stats/5).
-% :- dynamic(limit/1).
-% :- dynamic(onQuest/1).
-% :- dynamic(quest/3).
-% :- dynamic(lastHarvest/2).
-% :- dynamic(ternak/1).
-% :- dynamic(day/1).
+displayLoadMessage :-
+    typewrite('Suddenly you feel strange', 0.05),
+    sleep(1.5),
+    typewrite('...', 0.8),
+    sleep(1.5),
+    nl,
+    typewrite('You started to reflect on your life.', 0.05),
+    sleep(1.5),
+    nl,
+    typewrite('You walked through the window,', 0.05),
+    sleep(0.75),
+    typewrite(' looking at the outside world.', 0.05),
+    sleep(1.5),
+    nl,
+    typewrite('You began to think', 0.05),
+    sleep(0.75),
+    typewrite('...', 0.8),
+    sleep(1.5),
+    nl,
+    nl,
+    typewrite('Is it a new day already ?', 0.05),
+    sleep(1.5),
+    nl,
+    nl,
+    typewrite('Deja Vu.', 0.02),
+    sleep(0.75),
+    typewrite(' I know i\'ve been here before.', 0.02),
+    sleep(0.75),
+    nl,
+    nl.
