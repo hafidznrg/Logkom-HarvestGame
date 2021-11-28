@@ -19,6 +19,8 @@ price(goldfish, 225).
 price(tuna, 210).
 price(carp, 220).
 
+% I.S -
+% F.S get Elemen in list buy depend on Index
 getItemObject(Index, ItemObject) :-
   (Index = 1 -> ItemObject = carrot_seed ;
   Index = 2 -> ItemObject = corn_seed ;
@@ -29,6 +31,8 @@ getItemObject(Index, ItemObject) :-
   Index = 7 -> ItemObject = shovel ;
   Index = 8 -> ItemObject = fishing_rod ), !.
 
+% I.S -
+% F.S show menu buy 
 showMenuBuy  :-
   itemLevel(shovel, ShovelLevel),
   itemLevel(fishing_rod, RodLevel),
@@ -49,8 +53,13 @@ showMenuBuy  :-
   write('7. Level '), write(SoldShovelLevel), write(' shovel ('), (ShovelLevel = 0 -> write(150); write(ActualShovelPrice)), write(' golds)'), nl,
   write('8. Level '), write(SoldRodLevel), write(' fishing rod ('), (RodLevel = 0 -> write(150); write(ActualRodPrice)), write(' golds)'), nl, !.
 
+% I.S don't have sellable item
+% F.S display eror message 
 showSellableItemsHelper([], 1) :-
   write('You don\'t have any sellable goods!'), nl.
+
+% I.S -
+% F.S show sellable item
 showSellableItemsHelper([], _) :- !.
 showSellableItemsHelper(List, X) :-
   [H|T] = List,
@@ -70,6 +79,8 @@ showSellableItems :-
   inv(Inventory),
   showSellableItemsHelper(Inventory, 1), !.
 
+%  I.S -
+%  F.S handle mechanism market
 handleMarket :-
   repeat,
   nl, write('What do you want to do?'), nl,
@@ -83,6 +94,8 @@ handleMarket :-
 showCharged(Price) :-
   write('You have been charged '), write(Price), write(' golds.'), nl, !.
 
+% I.S option buy
+% F.S show menu market buy
 showMenuMarket(buy) :-
   showMenuBuy, nl,
   write('> '),
@@ -93,6 +106,8 @@ showMenuMarket(buy) :-
   Category == 'animal' ->  handleBuyAnimal(ItemObject) ;
   Category == 'tool' -> handleBuyTool(ItemObject)), !.
 
+% I.S option sell
+% F.S show menu market sell
 showMenuMarket(sell) :-
   showSellableItems,
   write('What do you want to sell?'), nl,
@@ -110,6 +125,8 @@ showMenuMarket(sell) :-
   read(Amount),
   handleSell(Option, Amount), !.
 
+% -
+% handle item sell
 handleSell(ItemObject, Amount) :-
   itemName(ItemObject, ItemName),
   invCount(ItemObject, ItemCount),
@@ -124,6 +141,8 @@ handleSell(ItemObject, Amount) :-
     write('You don\'t have that much! Cancelling ...'), nl
   )), !.
 
+% I.S -
+% F.S handle buy seed
 handleBuySeed(ItemObject) :-
   price(ItemObject, ItemPrice),
   nl, write('How many do you want to buy?'), nl,
@@ -140,6 +159,8 @@ handleBuySeed(ItemObject) :-
     reduceGold(AccPrice)
   )), !.
 
+% I.S -
+% F.S handle buy animal
 handleBuyAnimal(ItemObject) :-
   price(ItemObject, ItemPrice),
   nl, write('How many do you want to buy?'), nl,
@@ -156,6 +177,8 @@ handleBuyAnimal(ItemObject) :-
     reduceGold(AccPrice)
   )), !.
 
+% I.S -
+% I.S handle buy tool like shovel and fishing rod
 handleBuyTool(ItemObject) :-
   price(ItemObject, ItemPrice),
   itemLevel(ItemObject, ItemLevel),

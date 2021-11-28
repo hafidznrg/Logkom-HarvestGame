@@ -209,7 +209,7 @@ harvestPlant(Plant) :-
     retract(tile(XTile,YTile,'c')),
     asserta(tile(XTile,YTile,'P')),
     addFarmExp(10),
-    write('You harvested '), write(X1) ,write(' corn'),nl, !.
+    write('You harvested '), write(Num) ,write(' corn'),nl, !.
 
 % I.S. Farm is ready to harvest
 % F.S. RNG to get random number of product Carrot
@@ -229,7 +229,7 @@ harvestPlant(Plant) :-
     retract(tile(XTile,YTile,'r')),
     asserta(tile(XTile,YTile,'P')),
     addFarmExp(10),
-    write('You harvested '), write(X1) ,write(' carrot'),nl, !.
+    write('You harvested '), write(Num) ,write(' carrot'),nl, !.
 
 % I.S. Farm is ready to harvest
 % F.S. RNG to get random number of product Tomato
@@ -249,7 +249,7 @@ harvestPlant(Plant) :-
     retract(tile(XTile,YTile,'t')),
     asserta(tile(XTile,YTile,'P')),
     addFarmExp(10),
-    write('You harvested '), write(X1) ,write(' tomato'),nl, !.
+    write('You harvested '), write(Num) ,write(' tomato'),nl, !.
 
 % I.S -
 % F.S add seed to list Seed
@@ -283,9 +283,12 @@ addFarmExp(Amount) :-
     NewExp is Exp + Amount,
     NewE is E + Amount,
     NewS = [[Specialty, Level, NewExp], Fishing, Ranching],
-    write('> Farming experience added by '), write(Amount), write('!'), nl,
-	write('> Current farming level: '), write(Level), nl,
-	write('> Current farming EXP: '), write(NewE), nl,
     retract(stats(_,_,_,_,_)),
     assertz(stats(J, L, NewS, NewE, G)),
-    checkExp, !.
+    checkExp,
+    stats(J, L, S, E, G),
+    [Farming, Fishing, Ranching] = S,
+    [Specialty, Level, Exp] = Farming,
+    write('> Farming experience added by '), write(Amount), write('!'), nl,
+	write('> Current farming level: '), write(Level), nl,
+	write('> Current farming EXP: '), write(Exp), nl, !.
