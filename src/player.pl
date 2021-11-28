@@ -209,10 +209,10 @@ levelUp :-
 % F.S. initialize player as fisherman
 initFisherman :-
     initStats(fisherman),
-    assertz(inv([fishing_rod])),
-    assertz(invCount(shovel,0)),
+    assertz(inv([shovel, fishing_rod])),
+    assertz(invCount(shovel,1)),
     assertz(invCount(fishing_rod,1)),
-    assertz(itemLevel(shovel,0)),
+    assertz(itemLevel(shovel,1)),
     assertz(itemLevel(fishing_rod,2)),
     write('You choose Fisherman. You have level 2 fishing rod.\n'),
     write('Let\'s start farming!\n').
@@ -221,20 +221,17 @@ initFisherman :-
 % F.S. initialize player as farmer
 initFarmer :-
     initStats(farmer),
-    assertz(inv([shovel])),
+    assertz(inv([shovel, fishing_rod, carrot_seed, corn_seed, tomato_seed])),
     assertz(invCount(shovel,1)),
-    assertz(invCount(fishing_rod,0)),
+    assertz(invCount(fishing_rod,1)),
     assertz(itemLevel(shovel,1)),
-    assertz(itemLevel(fishing_rod,0)),
-    retract(count(carrot_seed,0)), 
-    retract(count(corn_seed,0)), 
-    retract(count(tomato_seed,0)), 
-    assertz(count(carrot_seed,1)), 
-    assertz(count(corn_seed,1)), 
-    assertz(count(tomato_seed,1)),
-    addToInventory(carrot_seed, 1),
-    addToInventory(corn_seed, 1),
-    addToInventory(tomato_seed, 1),
+    assertz(itemLevel(fishing_rod,1)),
+    increaseSeed(carrot_seed, 1),
+    increaseSeed(corn_seed, 1),
+    increaseSeed(tomato_seed, 1),
+    assertz(invCount(carrot_seed,1)),
+    assertz(invCount(corn_seed,1)),
+    assertz(invCount(tomato_seed,1)),
     write('You choose Farmer. You have 3 seeds.\n'),
     write('Let\'s start farming!\n').
 
@@ -242,11 +239,11 @@ initFarmer :-
 % F.S. initialize player as rancher
 initRancher :-
     initStats(rancher),
-    assertz(inv([])),
-    assertz(invCount(shovel,0)),
-    assertz(invCount(fishing_rod,0)),
-    assertz(itemLevel(shovel,0)),
-    assertz(itemLevel(fishing_rod,0)),
+    assertz(inv([shovel, fishing_rod])),
+    assertz(invCount(shovel,1)),
+    assertz(invCount(fishing_rod,1)),
+    assertz(itemLevel(shovel,1)),
+    assertz(itemLevel(fishing_rod,1)),
     retract(ternak(_)),
     retract(count(chicken,0)),
     assertz(ternak([chicken])),

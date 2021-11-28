@@ -7,25 +7,17 @@ price(sheep, 1000).
 price(cow, 1500).
 price(shovel, 300).       % This is not the real price, instead it's a multiplier.
 price(fishing_rod, 500).  % This is not the real price, instead it's a multiplier.
-
-% Seed adalah yang berhubungan dengan farming
-category(carrot_seed, 'seed').
-category(corn_seed, 'seed').
-category(tomato_seed, 'seed').
-% Animal adalah yang berhubungan dengan ranch
-category(chicken, 'animal').
-category(sheep, 'animal').
-category(cow, 'animal').
-% Tool adalah peralatan yang bisa diupgrade
-category(shovel, 'tool').
-category(fishing_rod, 'tool').
-% Loot adalah item yang bisa dijual
-category(corn, 'loot').
-category(carrot, 'loot').
-category(tomato, 'loot').
-category(egg, 'loot').
-category(milk, 'loot').
-category(wool, 'loot').
+% Selling price
+price(carrot, 200).
+price(corn, 200).
+price(tomato, 200).
+price(egg, 200).
+price(milk, 400).
+price(wool, 300).
+price(akame, 200).
+price(goldfish, 225).
+price(tuna, 210).
+price(carp, 220).
 
 getItemObject(Index, ItemObject) :-
   (Index = 1 -> ItemObject = carrot_seed ;
@@ -57,6 +49,27 @@ showMenuBuy  :-
   write('7. Level '), write(SoldShovelLevel), write(' shovel ('), (ShovelLevel = 0 -> write(150); write(ActualShovelPrice)), write(' golds)'), nl,
   write('8. Level '), write(SoldRodLevel), write(' fishing rod ('), (RodLevel = 0 -> write(150); write(ActualRodPrice)), write(' golds)'), nl, !.
 
+showSellableItemsHelper([], 1) :-
+  write('You don\'t have any sellable goods!'), nl.
+showSellableItemsHelper([], _) :- !.
+showSellableItemsHelper(List, X) :-
+  [H|T] = List,
+  category(H, Category),
+  (Category == 'loot'; Category == 'fish'),
+  invCount(H, ItemCount),
+  itemName(H, ItemName),
+  write('-'), write('  '), write(ItemCount), write(' '), write(ItemName), write('(s)'), nl,
+  Y is X + 1,
+  showSellableItemsHelper(T, Y).
+showSellableItemsHelper(List, X) :-
+  [_|T] = List,
+  showSellableItemsHelper(T, X).
+
+showSellableItems :-
+  write('Here are the sellable items in your inventory: '), nl,
+  inv(Inventory),
+  showSellableItemsHelper(Inventory, 1), !.
+
 handleMarket :-
   repeat,
   nl, write('What do you want to do?'), nl,
@@ -81,7 +94,35 @@ showMenuMarket(buy) :-
   Category == 'tool' -> handleBuyTool(ItemObject)), !.
 
 showMenuMarket(sell) :-
-  write('> TO-DO!'), nl, !.
+  showSellableItems,
+  write('What do you want to sell?'), nl,
+  nl,
+  write('> '),
+  read(Option),
+  invCount(Option, ItemCount),
+  category(Option, ItemCategory),
+  (ItemCategory == 'fish' ; ItemCategory == 'loot'),
+  ItemCount > 0,
+  nl,
+  write('How many do you want to sell?'), nl,
+  nl,
+  write('> '),
+  read(Amount),
+  handleSell(Option, Amount), !.
+
+handleSell(ItemObject, Amount) :-
+  itemName(ItemObject, ItemName),
+  invCount(ItemObject, ItemCount),
+  price(ItemObject, ItemPrice),
+  (Amount @=< ItemCount -> (
+    GoldIncrement is ItemPrice * Amount,
+    removeFromInventory(ItemObject, Amount),
+    write('You sold '), write(Amount), write(' '), write(ItemName), write('(s).'), nl,
+    write('You received '), write(GoldIncrement), write(' golds.'), nl,
+    addGold(GoldIncrement)
+  ) ; (
+    write('You don\'t have that much! Cancelling ...'), nl
+  )), !.
 
 handleBuySeed(ItemObject) :-
   price(ItemObject, ItemPrice),
@@ -118,12 +159,12 @@ handleBuyAnimal(ItemObject) :-
 handleBuyTool(ItemObject) :-
   price(ItemObject, ItemPrice),
   itemLevel(ItemObject, ItemLevel),
-  ActualPrice is ItemPrice * ItemLevel,
+  (ItemLevel == 0 -> ActualPrice is 150 ; ActualPrice is ItemPrice * ItemLevel),
   stats(_, _, _, _, G),
   (ActualPrice > G -> (
     write('You don\'t have enough gold!'), nl
   ) ; (
     upgradeItemLevel(ItemObject),
-    (ActualPrice = 0 -> showCharged(150); showCharged(ActualPrice)),
+    showCharged(ActualPrice),
     reduceGold(ActualPrice)
   )), !.

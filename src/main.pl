@@ -90,11 +90,7 @@ harvest :-
 
 fish :-
     gameStarted,
-    isNearPond,
-    handleFish, !.
-fish :-
-    gameStarted, 
-    write('You can\'t fish here!'), nl, !.
+    (isNearPond -> handleFish ; write('You can\'t fish here!'), nl), !.
 
 inventory :-
     gameStarted,

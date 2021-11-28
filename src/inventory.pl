@@ -37,6 +37,34 @@ itemName(tomato, 'tomato').
 itemName(egg, 'egg').
 itemName(milk, 'milk').
 itemName(wool, 'wool').
+itemName(akame, 'akame').
+itemName(goldfish, 'goldfish').
+itemName(tuna, 'tuna').
+itemName(carp, 'carp').
+
+% Seed adalah yang berhubungan dengan farming
+category(carrot_seed, 'seed').
+category(corn_seed, 'seed').
+category(tomato_seed, 'seed').
+% Animal adalah yang berhubungan dengan ranch
+category(chicken, 'animal').
+category(sheep, 'animal').
+category(cow, 'animal').
+% Tool adalah peralatan yang bisa diupgrade
+category(shovel, 'tool').
+category(fishing_rod, 'tool').
+% Loot adalah item yang bisa dijual
+category(corn, 'loot').
+category(carrot, 'loot').
+category(tomato, 'loot').
+category(egg, 'loot').
+category(milk, 'loot').
+category(wool, 'loot').
+% Fish adalah item hasil pancingan, bisa dijual juga
+category(akame, 'fish').
+category(goldfish, 'fish').
+category(tuna, 'fish').
+category(carp, 'fish').
 
 % addToInventory(Item, Count) adds 'Count' item(s) to the inventory.
 addToInventory(Item, Count) :-
@@ -73,7 +101,7 @@ showInvHelper(List, X) :-
   itemLevel(H, ItemLevel),
 	invCount(H, InvCount),
   itemName(H, ItemName),
-	write(X), write('. '), write(InvCount), write(' Level '), write(ItemLevel), write(' '), write(ItemName), write('.'), nl,
+	write(X), write('. '), write(InvCount), write(' level '), write(ItemLevel), write(' '), write(ItemName), write('.'), nl,
 	Y is X + 1,
 	showInvHelper(T, Y).
 showInvHelper(List, X) :-
@@ -102,7 +130,7 @@ removeFromInventory(Item, Count) :-
   itemName(Item, ItemName),
   retract(inv(_)),
   assertz(inv(NewInv)),
-  write('You have removed '), write(Count), write(' '), write(ItemName), write('(s) from your inventory!'), nl, !.
+  write('*** You have removed '), write(Count), write(' '), write(ItemName), write('(s) from your inventory!'), nl, !.
 % If Count < item's count, it will only decrease the count.
 removeFromInventory(Item, Count) :-
   invCount(Item, ItemCount),
@@ -111,7 +139,7 @@ removeFromInventory(Item, Count) :-
   itemName(Item, ItemName),
   retract(invCount(Item, _)),
   assertz(invCount(Item, NewCount)),
-  write('You have removed '), write(Count), write(' '), write(ItemName), write('(s) from your inventory!'), nl, !.
+  write('*** You have removed '), write(Count), write(' '), write(ItemName), write('(s) from your inventory!'), nl, !.
 % If both condition does not match, then the operation is valid.
 removeFromInventory(Item, _) :-
   itemName(Item, ItemName),
