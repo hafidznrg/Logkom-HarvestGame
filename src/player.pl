@@ -25,11 +25,16 @@ define(rancher, 'Rancher').
 % Player's gold is G
 :- dynamic(stats/5).
 
+:- dynamic(levelUpExp/1).
+
+levelUpExp(300).
+
 % I.S. stats(J, L, S, E, G) is true for some J, L, S, E, G
 % F.S. Displayed player statistics to the console
 status :- 
     gameStarted,
     stats(J, L, S, E, G),
+    levelUpExp(X),
     write('Your status:\n'),
     define(J, Job),
     write('Job: '),
@@ -40,6 +45,8 @@ status :-
     nl,
     write('Exp: '),
     write(E),
+    write('/'),
+    write(X),
     nl,
     displaySpecialtiesStats(S),
     % TODO: Add exp goal 
@@ -131,10 +138,33 @@ displayFaintMessage :-
 addGold(Qty) :-
     retract(stats(J, L, S, E, Gold)),
     CurrentGold is Qty + Gold,
-    asserta(stats(J, L, S, E, CurrentGold)).
+    asserta(stats(J, L, S, E, CurrentGold)),
+    checkGold.
+
+checkGold :-
+    stats(_, _, _, _, Gold),
+    (Gold >= 20000 -> win).
 
 % I.S. stats(J, L, S, E, Gold)
 % F.S. stats(J, L, S, E, Gold - Qty)
 reduceGold(Qty) :-
     Qty_ is Qty * -1,
     addGold(Qty_).
+
+checkExp :-
+    stats(_, _, _, E, _),
+    levelUpExp(L),
+    E >= L,
+    levelUp,
+    !.
+checkExp :- !.
+
+levelUp :-
+    retract(stats(J, L, S, _, G)),
+    L_ is L + 1,
+    retract(levelUpExp(X)),
+    X_ is X + 100,
+    asserta(stats(J, L_, S, 0, G)),
+    asserta(levelUpExp(X_)),
+    write('Congratulations, you just leveled up !'),
+    nl.
