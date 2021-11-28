@@ -44,32 +44,38 @@ showMenuBuy :-
 % showMenuSell :-
 
 handleMarket :-
-    write(' What do you want to do?'), nl,nl,
+    repeat,
+    write(' What do you want to do?'), nl,
     write(' 1. buy'),nl,
-    write(' 2. sell'),nl,
+    write(' 2. sell'),nl, nl,
+    write('> '),
     read(Option),
-    showMenuMarket(Option), !.
+    ((Option = 'buy'; Option = 'sell') -> !, showMenuMarket(Option);
+    write('Invalid choice'), nl, fail), !.
 
 showMenuMarket(buy) :-
-    showMenuBuy,
+    showMenuBuy, nl,
     buyItem(BuyItem),
+    write('> '),
     read(Option),
-    getElem(BuyItem, Option, Y),
+    Option1 is Option-1,
+    getElem(BuyItem, Option1, Y),
     price(Y, Price),
     write(' How many do you want to buy?'),nl,
+    write('> '),
     read(Sum),
-    write(Sum), write('harga/satuan: ') ,write(Price),nl,
+    % write(Sum), write('harga/satuan: ') ,write(Price),nl,
     Price2 is Sum*Price,
-    write(Price2),nl,
+    % write(Price2),nl,
     stats(_, _, _, _, G),
     (Price2 > G -> write('Not enough gold'),nl;
-    Option = 1 -> increaseSeed(carrot_seed, Sum), reduceGold(Price2);
-    Option = 2 -> increaseSeed(corn_seed, Sum), reduceGold(Price2);
-    Option = 3 -> increaseSeed(tomato_seed, Sum), reduceGold(Price2);
-    Option = 4 -> increaseSeed(potato_seed, Sum), reduceGold(Price2);
-    Option = 5 -> increaseAnimal(chicken, Sum), reduceGold(Price2);
-    Option = 6 -> increaseAnimal(sheep, Sum), reduceGold(Price2);
-    Option = 7 -> increaseAnimal(cow, Sum), reduceGold(Price2);
+    Option = 1 -> increaseSeed(carrot_seed, Sum), reduceGold(Price2), showCharged(Y, Sum, Price2);
+    Option = 2 -> increaseSeed(corn_seed, Sum), reduceGold(Price2), showCharged(Y, Sum, Price2);
+    Option = 3 -> increaseSeed(tomato_seed, Sum), reduceGold(Price2), showCharged(Y, Sum, Price2);
+    Option = 4 -> increaseSeed(potato_seed, Sum), reduceGold(Price2), showCharged(Y, Sum, Price2);
+    Option = 5 -> increaseAnimal(chicken, Sum), reduceGold(Price2), showCharged(Y, Sum, Price2);
+    Option = 6 -> increaseAnimal(sheep, Sum), reduceGold(Price2), showCharged(Y, Sum, Price2);
+    Option = 7 -> increaseAnimal(cow, Sum), reduceGold(Price2), showCharged(Y, Sum, Price2);
     count(Y, Sum0),
     Sum1 is Sum + Sum0,
     retract(count(Y, Sum0)),
@@ -93,5 +99,9 @@ showMenuMarket(sell) :-
     price(Item, X),
     Price2 is X*Sell,
     addGold(Price2)), !.
+
+showCharged(Y, X, Price) :-
+    write('You have bought '), write(X), write(' '), write(Y), (X > 1, write('s.'); write('.')), nl,
+    write('You have charged '), write(Price), write(' Golds.'), nl.
 
 %   startGame. start. 1.
