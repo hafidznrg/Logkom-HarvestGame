@@ -2,7 +2,6 @@
 price(carrot_seed, 50).
 price(corn_seed, 50).
 price(tomato_seed, 50).
-price(potato_seed, 50).
 price(chicken, 500).
 price(sheep, 1000).
 price(cow, 1500).
@@ -13,7 +12,6 @@ price(fishing_rod, 500).  % This is not the real price, instead it's a multiplie
 category(carrot_seed, 'seed').
 category(corn_seed, 'seed').
 category(tomato_seed, 'seed').
-category(potato_seed, 'seed').
 % Animal adalah yang berhubungan dengan ranch
 category(chicken, 'animal').
 category(sheep, 'animal').
@@ -25,7 +23,6 @@ category(fishing_rod, 'tool').
 category(corn, 'loot').
 category(carrot, 'loot').
 category(tomato, 'loot').
-category(potato, 'loot').
 category(egg, 'loot').
 category(milk, 'loot').
 category(wool, 'loot').
@@ -34,12 +31,11 @@ getItemObject(Index, ItemObject) :-
   (Index = 1 -> ItemObject = carrot_seed ;
   Index = 2 -> ItemObject = corn_seed ;
   Index = 3 -> ItemObject = tomato_seed ;
-  Index = 4 -> ItemObject = potato_seed ;
-  Index = 5 -> ItemObject = chicken ;
-  Index = 6 -> ItemObject = sheep ;
-  Index = 7 -> ItemObject = cow ;
-  Index = 8 -> ItemObject = shovel ;
-  Index = 9 -> ItemObject = fishing_rod ), !.
+  Index = 4 -> ItemObject = chicken ;
+  Index = 5 -> ItemObject = sheep ;
+  Index = 6 -> ItemObject = cow ;
+  Index = 7 -> ItemObject = shovel ;
+  Index = 8 -> ItemObject = fishing_rod ), !.
 
 showMenuBuy  :-
   itemLevel(shovel, ShovelLevel),
@@ -55,12 +51,11 @@ showMenuBuy  :-
   write('1. Carrot seed (50 golds)'), nl,
   write('2. Corn seed (50 golds)'), nl,
   write('3. Tomato seed (50 golds)'), nl,
-  write('4. Potato seed (50 golds)'), nl,
-  write('5. Chicken (500 golds)'), nl,
-  write('6. Sheep (1000 golds)'), nl,
-  write('7. Cow (1500 golds)'), nl, 
-  write('8. Level '), write(SoldShovelLevel), write(' shovel ('), write(ActualShovelPrice), write(' golds)'), nl,
-  write('9. Level '), write(SoldRodLevel), write(' fishing rod ('), write(ActualRodPrice), write(' golds)'), nl, !.
+  write('4. Chicken (500 golds)'), nl,
+  write('5. Sheep (1000 golds)'), nl,
+  write('6. Cow (1500 golds)'), nl, 
+  write('7. Level '), write(SoldShovelLevel), write(' shovel ('), write(ActualShovelPrice), write(' golds)'), nl,
+  write('8. Level '), write(SoldRodLevel), write(' fishing rod ('), write(ActualRodPrice), write(' golds)'), nl, !.
 
 handleMarket :-
   repeat,

@@ -80,7 +80,7 @@ showSeed([]) :- !.
 
 showSeed([Head|Tail]) :-
     count(Head,X),
-    (X>0, write('     - '), write(X), write('  '), write(Head), nl; nl),
+    (X>0, write('     - '), write(X), write(' '), write(Head), nl; write('')),
     showSeed(Tail).
 
 

@@ -29,13 +29,11 @@ upgradeItemLevel(Item) :-
 itemName(carrot_seed, 'carrot seed').
 itemName(corn_seed, 'corn seed').
 itemName(tomato_seed, 'tomato seed').
-itemName(potato_seed, 'potato seed').
 itemName(shovel, 'shovel').
 itemName(fishing_rod, 'fishing rod').
 itemName(corn, 'corn').
 itemName(carrot, 'carrot').
 itemName(tomato, 'tomato').
-itemName(potato, 'potato').
 itemName(egg, 'egg').
 itemName(milk, 'milk').
 itemName(wool, 'wool').
