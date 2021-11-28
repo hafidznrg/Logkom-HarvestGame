@@ -286,9 +286,9 @@ addFarmExp(Amount) :-
     retract(stats(_,_,_,_,_)),
     assertz(stats(J, L, NewS, NewE, G)),
     checkExp,
-    stats(J, L, S, E, G),
-    [Farming, Fishing, Ranching] = S,
-    [Specialty, Level, Exp] = Farming,
+    stats(_, _, S_, _, _),
+    [Farming_, _, _] = S_,
+    [_, Level_, Exp_] = Farming_,
     write('> Farming experience added by '), write(Amount), write('!'), nl,
-	write('> Current farming level: '), write(Level), nl,
-	write('> Current farming EXP: '), write(Exp), nl, !.
+	write('> Current farming level: '), write(Level_), nl,
+	write('> Current farming EXP: '), write(Exp_), nl, !.
