@@ -232,6 +232,9 @@ initFarmer :-
     assertz(count(carrot_seed,1)), 
     assertz(count(corn_seed,1)), 
     assertz(count(tomato_seed,1)),
+    addToInventory(carrot_seed, 1),
+    addToInventory(corn_seed, 1),
+    addToInventory(tomato_seed, 1),
     write('You choose Farmer. You have 3 seeds.\n'),
     write('Let\'s start farming!\n').
 
