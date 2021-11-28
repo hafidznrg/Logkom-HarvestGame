@@ -5,8 +5,8 @@
 % define playerWorkingLimit(X) as
 % "Player can work for X times before they fainted."
 playerWorkingLimit(10).
-% define specialites(L) as
-% "L is the list of available specialites in the game"
+% define specialties(L) as
+% "L is the list of available specialties in the game"
 specialties([farming, fishing, ranching]).
 % define jobs(L) as
 % "L is the list of available jobs in the game"
@@ -17,6 +17,12 @@ define(fisherman, 'Fisherman').
 define(farmer, 'Farmer').
 define(rancher, 'Rancher').
 
+% define correlate(J, S) as
+% "S is the specialty of job J"
+correlate(farmer, farming).
+correlate(fisherman, fishing).
+correlate(rancher, ranching).
+
 % define stats(J, L, S, E, G) as
 % Player's job is J
 % Player's level is L
@@ -26,8 +32,12 @@ define(rancher, 'Rancher').
 :- dynamic(stats/5).
 
 :- dynamic(levelUpExp/1).
+:- dynamic(specialtyLevelUpExp/2).
 
 levelUpExp(300).
+specialtyLevelUpExp(farming, 300).
+specialtyLevelUpExp(fishing, 300).
+specialtyLevelUpExp(ranching, 300).
 
 % I.S. stats(J, L, S, E, G) is true for some J, L, S, E, G
 % F.S. Displayed player statistics to the console
@@ -49,7 +59,6 @@ status :-
     write(X),
     nl,
     displaySpecialtiesStats(S),
-    % TODO: Add exp goal 
     write('Gold: '),
     write(G),
     nl.
@@ -59,6 +68,7 @@ status :-
 displaySpecialtiesStats([]) :- !.
 displaySpecialtiesStats(S) :-
     S = [[Specialty, Level, Exp]|Sub],
+    specialtyLevelUpExp(Specialty, E),
     write('Level '),
     write(Specialty),
     write(': '),
@@ -68,22 +78,24 @@ displaySpecialtiesStats(S) :-
     write(Specialty),
     write(': '),
     write(Exp),
+    write('/'),
+    write(E),
     nl,
     displaySpecialtiesStats(Sub).
 
 % I.S. stats(J, L, S, E, G) is false for any J, L, S, E, G
 % F.S. stats(J, 1, S, 0, 0) is true for input J and specific S
 initStats(J) :-
-    jobs(JobList),
-    newSpecialtiesList(JobList, S),
+    specialties(Specialties),
+    newSpecialtiesList(Specialties, S),
     asserta(stats(J, 1, S, 0, 1000)).
 
 % Constructs a new specialties list consisting of triples
 % [specialty, level, exp]
 newSpecialtiesList([], []) :- !.
-newSpecialtiesList([Job|Tail], Result) :-
+newSpecialtiesList([Specialty|Tail], Result) :-
     newSpecialtiesList(Tail, Subresult),
-    Result = [[Job, 1, 0]|Subresult].
+    Result = [[Specialty, 1, 0]|Subresult].
 
 % define limit(X) as
 % "player can do X more activities this day before
@@ -152,12 +164,36 @@ reduceGold(Qty) :-
     addGold(Qty_).
 
 checkExp :-
-    stats(_, _, _, E, _),
-    levelUpExp(L),
-    E >= L,
+    stats(_, _, S, E, _),
+    checkSpecialtiesExp(S, NewS),
+    retract(stats(J, L, S, E, G)),
+    asserta(stats(J, L, NewS, E, G)),
+    levelUpExp(LU),
+    E >= LU,
     levelUp,
     !.
 checkExp :- !.
+
+checkSpecialtiesExp([], []) :- !.
+checkSpecialtiesExp([[Specialty, Level, Exp]|Sub], S) :-
+    checkSpecialtiesExp(Sub, SubList),
+    checkSpecialtyExp(Specialty, Exp, Level, NewExp, NewLevel),
+    S = [[Specialty, NewLevel, NewExp]|SubList].
+
+checkSpecialtyExp(Specialty, Exp, Level, NewExp, NewLevel) :-
+    specialtyLevelUpExp(Specialty, LExp),
+    Exp >= LExp,
+    NextExp is Exp - LExp,
+    retract(specialtyLevelUpExp(Specialty, LExp)),
+    NewLExp is LExp + 100,
+    NextLevel is Level + 1,
+    write('Congratulations, you just leveled up at '),
+    write(Specialty),
+    write(' !'),
+    nl,
+    asserta(specialtyLevelUpExp(Specialty, NewLExp)),
+    checkSpecialtyExp(Specialty, NextExp, NextLevel, NewExp, NewLevel).
+checkSpecialtyExp(_, E, L, E, L) :- !.
 
 levelUp :-
     retract(stats(J, L, S, _, G)),

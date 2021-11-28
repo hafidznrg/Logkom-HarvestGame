@@ -124,8 +124,10 @@ harvestThis(Hewan) :-
 
 getRanchLevel([],_,0) :- !.
 getRanchLevel([[Specialty, Level, _] | Tail], Job, X) :-
-    (Job = Specialty -> X is Level;
-    getRanchLevel(Tail,Job,X)).
+    (
+        correlate(Job, Specialty) -> X is Level;
+        getRanchLevel(Tail,Job,X)
+    ).
     
 
 % I.S. -
