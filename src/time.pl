@@ -21,4 +21,5 @@ nextDay :-
 lose :-
     write('You have worked hard, but in the end result is all that matters'),
     nl,
-    write('May God bless you in the future with kind people!').
+    write('May God bless you in the future with kind people!'),
+    nl.

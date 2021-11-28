@@ -96,7 +96,7 @@ harvestRanch(Hewan) :-
     day(Day),
     Day =< Day0+5,
     produce(Hewan,Result),
-    write('Your '), write(Hewan), write(' hasn\'t produce any '), write(Result), nl,
+    write('Your '), write(Hewan), write(' hasn\'t produced any '), write(Result), nl,
     write('Please check again later.'), nl.
 
 % I.S. Command isn't match

@@ -29,7 +29,7 @@ initItem([Head|Tail]) :-
 
 showMenuBuy :-
     nl,
-    write(' what do you wan\'t to buy?'), nl,nl,
+    write(' What do you want to buy?'), nl,nl,
     write(' 1. Carrot seed (50 golds)'), nl,
     write(' 2. Corn seed (50 golds)'), nl,
     write(' 3. Tomato seed (50 golds)'), nl,
