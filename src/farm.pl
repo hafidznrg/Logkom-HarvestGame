@@ -54,7 +54,7 @@ initFarm :-
     initCorn(ListCarrot),
     initCorn(ListTomato),
     initCorn(ListCorn).
-    
+
 showBannerFarm :-
     write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('~~                                          ~~'), nl,
@@ -69,12 +69,12 @@ handleFarm :-
     (\+ isempty(ListSeed)) -> write('You have: '),nl,
     showSeed(ListSeed),
     write('What do you want to plant?'), nl,
-    plantproduce(ListPlant), 
+    plantproduce(ListPlant),
     write('>>> '),
     read(Plant),
     (isMember(Plant,ListPlant) -> plant(Plant), !;
-    write('Oops. You can\'t choose this command.'), nl)), !. 
-    
+    write('Oops. You can\'t choose this command.'), nl)), !.
+
 
 showSeed([]) :- !.
 
@@ -87,7 +87,7 @@ showSeed([Head|Tail]) :-
 plant(Plant) :-
     produces(Y, Plant),
     count(Y, Count),
-    Count = 0, 
+    Count = 0,
     write('Not enough seeds to plant'),nl, !.
 
 
@@ -153,7 +153,7 @@ plantSeed(Seed) :-
     asserta(tile(C,D,'P')), !.
 
 handleSeed([]) :- !.
-handleSeed([Head| Tail], Corn) :- 
+handleSeed([Head| Tail], Corn) :-
     lastHarvestSeed(Head, X),
     (X = 0 -> Corn = Head, !;
     handleSeed(Tail, Corn)).
@@ -204,7 +204,7 @@ harvestPlant(Plant) :-
 
 harvestPlant(Plant) :-
     carrotSeed(ListCarrot),
-    isMember(Plant, ListCarrot), 
+    isMember(Plant, ListCarrot),
     count(carrot, X),
     stats(J,L,_,_,_),
     (J = farmer -> Base is (L//3)+1, Max is Base+4;
@@ -243,7 +243,7 @@ increaseSeed(Seed, Add) :-
     count(Seed, Before),
     After is Before+Add,
     seed(ListSeed),
-    (\+ isMember(Seed, ListSeed), 
+    (\+ isMember(Seed, ListSeed),
     push(ListSeed, Seed, NewList),
     retract(seed(ListSeed)),
     assertz(seed(NewList)); !),
