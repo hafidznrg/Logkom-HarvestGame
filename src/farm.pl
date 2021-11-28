@@ -2,6 +2,7 @@
 :- dynamic(count/2).
 :- dynamic(seed/1).
 :- dynamic(seedTile/3).
+:- dynamic(limitFarm/1).
 
 seeds([corn_seed,tomato_seed,carrot_seed]).
 
@@ -45,6 +46,7 @@ initCorn([Head1|Tail1]) :-
 
 initFarm :-
     seeds(ListSeed),
+    assertz(limitFarm(0)),
     cornSeed(ListCorn),
     carrotSeed(ListCarrot),
     tomatoSeed(ListTomato),
@@ -86,7 +88,7 @@ plant(Plant) :-
     produces(Y, Plant),
     count(Y, Count),
     Count = 0, 
-    write('not enough seeds to plant'),nl, !.
+    write('Not enough seeds to plant'),nl, !.
 
 
 plant(Plant) :-
@@ -96,10 +98,11 @@ plant(Plant) :-
     Counta is Count - 1,
     plantSeed(Seed),
     produces(Seed, Plant),
+    removeFromInventory(Seed, 1),
     retract(count(Seed, Count)),
     assertz(count(Seed,Counta)),
-    write('you planted a '),write(Plant) ,write(' seed'), nl,
-    !.
+    write('You planted a '),write(Plant) ,write(' seed'), nl,
+    workFarm, !.
     % retract(tile(X,Y,'P')),
     % asserta(tile(X,Y,'F')),
     % asserta(tile(X,Y,'P')),
@@ -165,7 +168,7 @@ handleHarvest(X, Y) :-
     seedTile(X,Y,Plant),
     day(Day),
     lastHarvestSeed(Plant,DayPlant),
-    Day > DayPlant + 5, !,
+    Day > DayPlant + 2, !,
     harvestPlant(Plant),
     retract(lastHarvestSeed(Plant,DayPlant)),
     asserta(lastHarvestSeed(Plant,0)),
@@ -176,8 +179,8 @@ handleHarvest(X, Y) :-
     seedTile(X,Y,Plant),
     day(Day),
     lastHarvestSeed(Plant,DayPlant),
-    Day =< DayPlant+5,
-    write('Your seed not ready to harvest '),nl,
+    Day =< DayPlant+2,
+    write('Your seed is not ready for harvest '),nl,
     write('Please check again later.'), nl,!.
 
 
@@ -189,6 +192,7 @@ harvestPlant(Plant) :-
     (J = farmer -> Base is (L//3)+1, Max is Base+4;
     Base is 1, Max is 4),
     random(Base,Max,Num),
+    addToInventory(corn, Num),
     X1 is X+Num,
     retract(count(corn,_)),
     asserta(count(corn, X1)),
@@ -206,6 +210,7 @@ harvestPlant(Plant) :-
     (J = farmer -> Base is (L//3)+1, Max is Base+4;
     Base is 1, Max is 4),
     random(Base,Max,Num),
+    addToInventory(carrot, Num),
     X1 is X+Num,
     retract(count(carrot,_)),
     asserta(count(carrot, X1)),
@@ -219,6 +224,7 @@ harvestPlant(Plant) :-
     (J = farmer -> Base is (L//3)+1, Max is Base+4;
     Base is 1, Max is 4),
     random(Base,Max,Num),
+    addToInventory(tomato, Num),
     X1 is X+Num,
     retract(count(tomato,_)),
     asserta(count(tomato, X1)),
@@ -243,3 +249,12 @@ increaseSeed(Seed, Add) :-
     assertz(seed(NewList)); !),
     retract(count(Seed,Before)),
     assertz(count(Seed,After)).
+
+workFarm :-
+    limitFarm(Limit),
+    retract(limitFarm(_)),
+    X1 is Limit +1,
+    assertz(limitFarm(X1)),
+    (X1 = 3 -> work;
+    X1 > 3 -> retract(limitFarm(_)),assertz(limitFarm(0));
+    write('')), !.

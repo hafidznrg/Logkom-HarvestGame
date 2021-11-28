@@ -69,7 +69,7 @@ displaySpecialtiesStats(S) :-
 initStats(J) :-
     jobs(JobList),
     newSpecialtiesList(JobList, S),
-    asserta(stats(J, 1, S, 0, 0)).
+    asserta(stats(J, 1, S, 0, 1000)).
 
 % Constructs a new specialties list consisting of triples
 % [specialty, level, exp]

@@ -72,11 +72,15 @@ plant :-
     (tile(X,Y,'=') -> handleFarm; 
     write('You need to go to the farm field or dig the tile first'), nl), !.
 
+% market :-
+%     gameStarted,
+%     tile(X,Y,'P'),
+%     (tile(X,Y,'M') -> handleMarket;
+%     write('You need to go to the Market first.'), nl), !.
+
 market :-
     gameStarted,
-    tile(X,Y,'P'),
-    (tile(X,Y,'M') -> handleMarket;
-    write('You need to go to the Market first.'), nl), !.
+    handleMarket.
 
 quest :-
     gameStarted,
@@ -98,6 +102,10 @@ fish :-
 fish :-
     gameStarted, 
     write('You can\'t fish here!'), nl, !.
+
+inventory :-
+    gameStarted,
+    showInventory, !.
 
 showMenu :-
     write('  _   _                           _   '), nl,

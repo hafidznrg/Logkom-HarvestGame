@@ -115,6 +115,7 @@ harvestThis(Hewan) :-
     Base is 1, Max is 4),
     random(Base,Max,Num),
     showResult(Num,Product),
+    addToInventory(Product, Num),
     count(Product,Before),
     After is Before+Num,
     retract(count(Product,Before)),
