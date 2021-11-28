@@ -14,17 +14,6 @@ produce(cow, milk).
 produce(sheep, wool).
 produce(chicken, egg).
 
-% DELETE THIS LATER
-% count(cow,0).
-% count(sheep,0).
-% count(chicken,0).
-% count(milk,0).
-% count(wool,0).
-% count(egg,0).
-% lastHarvest(cow,0).
-% lastHarvest(sheep,0).
-% lastHarvest(chicken,0).
-
 % Define count for each animals and its product
 % Initialize fact about Ranch
 initRanch :-
@@ -40,9 +29,7 @@ initCattle([Head|Tail]) :-
     assertz(lastHarvest(Head,0)),
     initCattle(Tail).
 
-% Testing
-% PLayer have cow and chicken
-% Edit count
+% Initialize empty ternak
 ternak([]).
 
 % I.S. showBannerRanch is called
@@ -84,9 +71,10 @@ harvestRanch(Hewan) :-
     day(Day),
     Day > Day0+5, !,
     work,
+    addRanchExp(50),
     harvestThis(Hewan),
     retract(lastHarvest(Hewan,Day0)),
-    assertz(lastHarvest(Hewan, Day)).
+    assertz(lastHarvest(Hewan, Day)), !.
 
 % I.S. Cattle isn't ready
 % F.S. Display error message
@@ -146,3 +134,19 @@ increaseAnimal(Hewan, Add) :-
     assertz(ternak(NewList)); !),
     retract(count(Hewan,Before)),
     assertz(count(Hewan,After)).
+
+% Adds Amount to both ranch EXP and general EXP.
+addRanchExp(Amount) :-
+    stats(J, L, S, E, G),
+    [Farming, Fishing, Ranching] = S,
+    [Specialty, Level, Exp] = Ranching,
+    NewExp is Exp + Amount,
+    NewE is E + Amount,
+    NewS = [Farming, Fishing, [Specialty, Level, NewExp]],
+    retract(stats(_,_,_,_,_)),
+    assertz(stats(J, L, NewS, NewE, G)),
+    checkExp,
+    stats(_,_,[_,_,[_,LevelNow,ExpNow]],_,_),
+    write('> Ranching experience added by '), write(Amount), write('!'), nl,
+	write('> Current ranching level: '), write(LevelNow), nl,
+	write('> Current ranching EXP: '), write(ExpNow), nl, !.
