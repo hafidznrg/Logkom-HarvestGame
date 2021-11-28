@@ -54,8 +54,8 @@ showMenuBuy  :-
   write('4. Chicken (500 golds)'), nl,
   write('5. Sheep (1000 golds)'), nl,
   write('6. Cow (1500 golds)'), nl, 
-  write('7. Level '), write(SoldShovelLevel), write(' shovel ('), write(ActualShovelPrice), write(' golds)'), nl,
-  write('8. Level '), write(SoldRodLevel), write(' fishing rod ('), write(ActualRodPrice), write(' golds)'), nl, !.
+  write('7. Level '), write(SoldShovelLevel), write(' shovel ('), (ShovelLevel = 0 -> write(150); write(ActualShovelPrice)), write(' golds)'), nl,
+  write('8. Level '), write(SoldRodLevel), write(' fishing rod ('), (RodLevel = 0 -> write(150); write(ActualRodPrice)), write(' golds)'), nl, !.
 
 handleMarket :-
   repeat,
@@ -124,6 +124,6 @@ handleBuyTool(ItemObject) :-
     write('You don\'t have enough gold!'), nl
   ) ; (
     upgradeItemLevel(ItemObject),
-    showCharged(ActualPrice),
+    (ActualPrice = 0 -> showCharged(150); showCharged(ActualPrice)),
     reduceGold(ActualPrice)
   )), !.

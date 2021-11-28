@@ -11,11 +11,11 @@
 :- dynamic(itemLevel/2).
 
 % At first, the inventory has a level 1 fishing rod and a level 1 shovel.
-inv([shovel, fishing_rod]).
-itemLevel(shovel, 1).
-itemLevel(fishing_rod, 1).
-invCount(shovel, 1).
-invCount(fishing_rod, 1).
+% inv([shovel, fishing_rod]).
+% itemLevel(shovel, 1).
+% itemLevel(fishing_rod, 1).
+% invCount(shovel, 1).
+% invCount(fishing_rod, 1).
 
 upgradeItemLevel(Item) :-
   itemLevel(Item, ItemLevel),

@@ -37,7 +37,7 @@ initCattle([Head|Tail]) :-
     produce(Head,Product),
     assertz(count(Head,0)),
     assertz(count(Product,0)),
-    assertz(lastHarvest(Product,0)),
+    assertz(lastHarvest(Head,0)),
     initCattle(Tail).
 
 % Testing
@@ -63,6 +63,7 @@ handleRanch :-
     (\+ empty(ListTernak)) -> write('   You have:'), nl,
     showTernak(ListTernak),
     write('What do you want to do?'), nl,
+    write(' > '),
     read(Hewan), !,
     harvestRanch(Hewan)).
 

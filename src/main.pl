@@ -31,14 +31,11 @@ start :-
     repeat,
     write('> '),
     read(Num),
-    (Num is 1 -> Job = fisherman, initStats(Job), !, welcomeMessage(Job);
-    Num is 2 -> Job = farmer, initStats(Job), !, welcomeMessage(Job);
-    Num is 3 -> Job = rancher, initStats(Job), !, welcomeMessage(Job);
+    (Num is 1 -> initFisherman;
+    Num is 2 -> initFarmer;
+    Num is 3 -> initRancher;
     write('Invalid choice!'), nl, fail)
     , !. 
-
-welcomeMessage(Job) :-
-    write('You chose '), write(Job), write('. Let\'s start farming'), nl.
 
 ranch :- 
     gameStarted,
@@ -72,15 +69,11 @@ plant :-
     (tile(X,Y,'=') -> handleFarm; 
     write('You need to go to the farm field or dig the tile first'), nl), !.
 
-% market :-
-%     gameStarted,
-%     tile(X,Y,'P'),
-%     (tile(X,Y,'M') -> handleMarket;
-%     write('You need to go to the Market first.'), nl), !.
-
 market :-
     gameStarted,
-    handleMarket.
+    tile(X,Y,'P'),
+    (tile(X,Y,'M') -> handleMarket;
+    write('You need to go to the Market first.'), nl), !.
 
 quest :-
     gameStarted,
