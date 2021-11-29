@@ -206,6 +206,15 @@ save :-
     specialtyLevelUpExp(ranching, RanchLE),
     writeSaveData(Stream, specialtyLevelUpExp(ranching, RanchLE)),
 
+    totalItem(TotalItem),
+    writeSaveData(Stream, totalItem(TotalItem)),
+
+    fishStamina(FS),
+    writeSaveData(Stream, fishStamina(FS)),
+
+    digStamina(DS),
+    writeSaveData(Stream, digStamina(DS)),
+
     write(Stream, '  !.\n'),
 
     close(Stream).
@@ -325,6 +334,9 @@ loadData(Day) :-
     retractall(day(_)),
     retractall(levelUpExp(_)),
     retractall(specialtyLevelUpExp(_, _)),
+    retractall(totalItem(_)),
+    retractall(fishStamina(_)),
+    retractall(digStamina(_)),
     toString(Day, DayStr),
     atom_concat('save_data/', DayStr, Base),
     atom_concat(Base, '.pl', Filename),
