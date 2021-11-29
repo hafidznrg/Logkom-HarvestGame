@@ -119,9 +119,17 @@ getFish(_) :-
 % Basically, it appends the fish to fishes if it isn't there yet,
 % else, it just decreases the fish count.
 addFish(X) :-
-	addToInventory(X, 1),
-	write('*** You caught a(n) '), write(X), write('!'),  nl,
-  addFishingExp(50), !.
+	totalItem(TotalItem),
+	InvCheck is TotalItem + 1,
+	( InvCheck @> 100 -> (
+		write('You caught a fish, but your inventory is full!'), nl,
+		write('You are forced to let it out back to the water.'), nl,
+		addFishingExp(50), !
+	) ; (
+		addToInventory(X, 1),
+		write('*** You caught a(n) '), write(X), write('!'),  nl,
+  	addFishingExp(50), !
+	)).
 
 % showFishes(List, Count) shows the list of fishes that the player have.
 showFishes([], 1) :-

@@ -145,19 +145,26 @@ handleSell(ItemObject, Amount) :-
 % F.S handle buy seed
 handleBuySeed(ItemObject) :-
   price(ItemObject, ItemPrice),
+  totalItem(TotalItem),
   nl, write('How many do you want to buy?'), nl,
   write('> '),
   read(ItemCount),
-  AccPrice is ItemPrice * ItemCount,
-  stats(_, _, _, _, G),
-  (AccPrice > G -> (
-    write('You don\'t have enough gold!'), nl
+  InvCheck is TotalItem + ItemCount,
+  ( InvCheck @> 100 -> (
+    write('Not enough capacity at your inventory!'), nl, !
   ) ; (
-    addToInventory(ItemObject, ItemCount),
-    increaseSeed(ItemObject, ItemCount),
-    showCharged(AccPrice),
-    reduceGold(AccPrice)
-  )), !.
+    AccPrice is ItemPrice * ItemCount,
+    stats(_, _, _, _, G),
+    (AccPrice > G -> (
+      write('You don\'t have enough gold!'), nl
+    ) ; (
+      addToInventory(ItemObject, ItemCount),
+      increaseSeed(ItemObject, ItemCount),
+      showCharged(AccPrice),
+      reduceGold(AccPrice)
+    )), !
+  )).
+  
 
 % I.S -
 % F.S handle buy animal

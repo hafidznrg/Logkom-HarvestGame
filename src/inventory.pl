@@ -9,6 +9,7 @@
 :- dynamic(invCount/2).
 % itemLevel(X, Y) means that X is at level Y.
 :- dynamic(itemLevel/2).
+:- dynamic(totalItem/1).
 
 % At first, the inventory has a level 1 fishing rod and a level 1 shovel.
 % inv([shovel, fishing_rod]).
@@ -74,6 +75,10 @@ addToInventory(Item, Count) :-
   NewInvCount is InvCount + Count,
   retract(invCount(Item, _)),
   assertz(invCount(Item, NewInvCount)),
+  totalItem(TotalItem),
+  NewTotalItem is TotalItem + Count,
+  retract(totalItem(_)),
+  assertz(totalItem(NewTotalItem)),
   itemName(Item, ItemName),
   write('*** Added '), write(Count), write(' '), write(ItemName), write('(s) to the inventory!'), nl, !.
 addToInventory(Item, Count) :-
@@ -82,14 +87,19 @@ addToInventory(Item, Count) :-
   assertz(invCount(Item, Count)),
   retract(inv(_)),
   assertz(inv(NewInv)),
+  totalItem(TotalItem),
+  NewTotalItem is TotalItem + Count,
+  retract(totalItem(_)),
+  assertz(totalItem(NewTotalItem)),
   itemName(Item, ItemName),
   write('*** Added '), write(Count), write(' '), write(ItemName), write('(s) to the inventory!'), nl, !.
 
 % showInventory shows the player's inventory.
 showInventory :-
   inv(Inv),
+  totalItem(TotalItem),
   write('=============================================='), nl,
-	write('These are the contents of your inventory: '), nl,
+	write('These are the contents of your inventory ('), write(TotalItem), write('/100) :'), nl,
 	showInvHelper(Inv, 1), 
 	write('=============================================='), nl, !.
 
@@ -130,6 +140,10 @@ removeFromInventory(Item, Count) :-
   itemName(Item, ItemName),
   retract(inv(_)),
   assertz(inv(NewInv)),
+  totalItem(TotalItem),
+  NewTotalItem is TotalItem - Count,
+  retract(totalItem(_)),
+  assertz(totalItem(NewTotalItem)),
   write('*** You have removed '), write(Count), write(' '), write(ItemName), write('(s) from your inventory!'), nl, !.
 % If Count < item's count, it will only decrease the count.
 removeFromInventory(Item, Count) :-
@@ -139,6 +153,10 @@ removeFromInventory(Item, Count) :-
   itemName(Item, ItemName),
   retract(invCount(Item, _)),
   assertz(invCount(Item, NewCount)),
+  totalItem(TotalItem),
+  NewTotalItem is TotalItem - Count,
+  retract(totalItem(_)),
+  assertz(totalItem(NewTotalItem)),
   write('*** You have removed '), write(Count), write(' '), write(ItemName), write('(s) from your inventory!'), nl, !.
 % If both condition does not match, then the operation is valid.
 removeFromInventory(Item, _) :-

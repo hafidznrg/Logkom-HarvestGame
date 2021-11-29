@@ -70,11 +70,7 @@ harvestRanch(Hewan) :-
     lastHarvest(Hewan, Day0),
     day(Day),
     Day > Day0+5, !,
-    work,
-    addRanchExp(50),
-    harvestThis(Hewan),
-    retract(lastHarvest(Hewan,Day0)),
-    assertz(lastHarvest(Hewan, Day)), !.
+    harvestThis(Hewan), !.
 
 % I.S. Cattle isn't ready
 % F.S. Display error message
@@ -103,12 +99,24 @@ harvestThis(Hewan) :-
     (J = rancher -> getRanchLevel(S,J,L), Base is (L//3)+1, Max is Base+4;
     Base is 1, Max is 4),
     random(Base,Max,Num),
-    showResult(Num,Product),
-    addToInventory(Product, Num),
-    count(Product,Before),
-    After is Before+Num,
-    retract(count(Product,Before)),
-    assertz(count(Product,After)).
+    totalItem(TotalItem),
+    InvCheck is TotalItem + Num,
+    ( InvCheck @> 100 -> (
+        nl, write('Clear out some space from your inventory first before harvesting!'), nl
+    ) ; (
+        showResult(Num,Product),
+        addToInventory(Product, Num),
+        count(Product,Before),
+        After is Before+Num,
+        retract(count(Product,Before)),
+        assertz(count(Product,After)),
+        work,
+        addRanchExp(50),
+        lastHarvest(Hewan, Day0),
+        day(Day),
+        retract(lastHarvest(Hewan,Day0)),
+        assertz(lastHarvest(Hewan, Day))
+    )), !.
 
 getRanchLevel([],_,0) :- !.
 getRanchLevel([[Specialty, Level, _] | Tail], Job, X) :-

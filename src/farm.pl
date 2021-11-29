@@ -174,11 +174,7 @@ handleHarvest(X, Y) :-
     day(Day),
     lastHarvestSeed(Plant,DayPlant),
     Day > DayPlant + 2, !,
-    harvestPlant(Plant),
-    retract(lastHarvestSeed(Plant,DayPlant)),
-    asserta(lastHarvestSeed(Plant,0)),
-    retract(seedTile(X,Y,Seed)),
-    asserta(seedTile(0,0,Seed)), !.
+    harvestPlant(Plant), !.
 
 % I.S. Farm isn't ready
 % F.S. Display error message
@@ -190,6 +186,14 @@ handleHarvest(X, Y) :-
     write('Your seed is not ready for harvest '),nl,
     write('Please check again later.'), nl,!.
 
+harvestHelper(X, Y) :-
+    seedTile(X, Y, Plant),
+    lastHarvestSeed(Plant, DayPlant),
+    retract(lastHarvestSeed(Plant,DayPlant)),
+    asserta(lastHarvestSeed(Plant,0)),
+    retract(seedTile(X,Y,Seed)),
+    asserta(seedTile(0,0,Seed)), !.
+
 % I.S. Farm is ready to harvest
 % F.S. RNG to get random number of product Corn
 harvestPlant(Plant) :-
@@ -200,16 +204,23 @@ harvestPlant(Plant) :-
     (J = farmer -> Base is (L//3)+1, Max is Base+4;
     Base is 1, Max is 4),
     random(Base,Max,Num),
-    addToInventory(corn, Num),
-    X1 is X+Num,
-    retract(count(corn,_)),
-    asserta(count(corn, X1)),
-    tile(XTile,YTile,'P'),
-    retract(tile(XTile,YTile,'P')),
-    retract(tile(XTile,YTile,'c')),
-    asserta(tile(XTile,YTile,'P')),
-    addFarmExp(10),
-    write('You harvested '), write(Num) ,write(' corn'),nl, !.
+    totalItem(TotalItem),
+    InvCheck is TotalItem + Num,
+    ( InvCheck @> 100 -> (
+        nl, write('Clear out some space from your inventory first before harvesting!'), nl
+    ) ; (
+        addToInventory(corn, Num),
+        X1 is X+Num,
+        retract(count(corn,_)),
+        asserta(count(corn, X1)),
+        tile(XTile,YTile,'P'),
+        retract(tile(XTile,YTile,'P')),
+        retract(tile(XTile,YTile,'c')),
+        asserta(tile(XTile,YTile,'P')),
+        addFarmExp(10),
+        harvestHelper(XTile, YTile),
+        write('You harvested '), write(Num) ,write(' corn'),nl, !
+    )).
 
 % I.S. Farm is ready to harvest
 % F.S. RNG to get random number of product Carrot
@@ -221,15 +232,22 @@ harvestPlant(Plant) :-
     (J = farmer -> Base is (L//3)+1, Max is Base+4;
     Base is 1, Max is 4),
     random(Base,Max,Num),
-    addToInventory(carrot, Num),
-    X1 is X+Num,
-    retract(count(carrot,_)),
-    asserta(count(carrot, X1)),
-    retract(tile(XTile,YTile,'P')),
-    retract(tile(XTile,YTile,'r')),
-    asserta(tile(XTile,YTile,'P')),
-    addFarmExp(10),
-    write('You harvested '), write(Num) ,write(' carrot'),nl, !.
+    totalItem(TotalItem),
+    InvCheck is TotalItem + Num,
+    ( InvCheck @> 100 -> (
+        nl, write('Clear out some space from your inventory first before harvesting!'), nl
+    ) ; (
+        addToInventory(carrot, Num),
+        X1 is X+Num,
+        retract(count(carrot,_)),
+        asserta(count(carrot, X1)),
+        retract(tile(XTile,YTile,'P')),
+        retract(tile(XTile,YTile,'r')),
+        asserta(tile(XTile,YTile,'P')),
+        addFarmExp(10),
+        harvestHelper(XTile, YTile),
+        write('You harvested '), write(Num) ,write(' carrot'),nl, !
+    )).
 
 % I.S. Farm is ready to harvest
 % F.S. RNG to get random number of product Tomato
@@ -241,15 +259,22 @@ harvestPlant(Plant) :-
     (J = farmer -> Base is (L//3)+1, Max is Base+4;
     Base is 1, Max is 4),
     random(Base,Max,Num),
-    addToInventory(tomato, Num),
-    X1 is X+Num,
-    retract(count(tomato,_)),
-    asserta(count(tomato, X1)),
-    retract(tile(XTile,YTile,'P')),
-    retract(tile(XTile,YTile,'t')),
-    asserta(tile(XTile,YTile,'P')),
-    addFarmExp(10),
-    write('You harvested '), write(Num) ,write(' tomato'),nl, !.
+    totalItem(TotalItem),
+    InvCheck is TotalItem + Num,
+    ( InvCheck @> 100 -> (
+        nl, write('Clear out some space from your inventory first before harvesting!'), nl
+    ) ; (
+        addToInventory(tomato, Num),
+        X1 is X+Num,
+        retract(count(tomato,_)),
+        asserta(count(tomato, X1)),
+        retract(tile(XTile,YTile,'P')),
+        retract(tile(XTile,YTile,'t')),
+        asserta(tile(XTile,YTile,'P')),
+        addFarmExp(10),
+        harvestHelper(XTile, YTile),
+        write('You harvested '), write(Num) ,write(' tomato'),nl, !
+    )).
 
 % I.S -
 % F.S add seed to list Seed
