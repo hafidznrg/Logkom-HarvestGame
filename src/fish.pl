@@ -6,6 +6,7 @@
 % :- dynamic(fishes/1).
 % count(X, Y) means there are Y X's.
 % :- dynamic(count/2).
+:- dynamic(fishStamina/1).
 
 % A predicate to check whether the player is near a pond or not.
 isNearPond :-
@@ -79,6 +80,20 @@ addFishingExp(Amount) :-
 	write('> Current fishing level: '), write(Level_), nl,
 	write('> Current fishing EXP: '), write(Exp_), nl, !.
 
+
+workFish :-
+	fishStamina(Stamina),
+	itemLevel(fishing_rod, RodLevel),
+	NewStamina is Stamina - 1,
+	( NewStamina == 0 -> (
+		work,
+		SetStamina is RodLevel
+	) ; (
+		SetStamina is NewStamina
+	)),
+	retract(fishStamina(_)),
+	assertz(fishStamina(SetStamina)), !.
+
 % Handle fish!
 % I.S. The player has a list of fishes
 % F.S. The list of fishes will be updated based on what the character fished.
@@ -92,13 +107,13 @@ handleFish :-
 	write('These are the fishes that you currently have: '), nl,
 	showFishes(Inventory, 1), 
 	write('=============================================='), nl,
-  work, !.
+  workFish, !.
 
 % getFish(X) will add different values to the list of fishes based on X.
 % X = 1 -> akame
 % X = 2 -> goldfish
-% X = 3 -> tuna
-% X = 4 -> carp
+% X = 3 -> tuna (minimum fishing level 2)
+% X = 4 -> carp (minimum fishing level 3)
 % Other than that, the player catches nothing.
 getFish(1) :-
 	addFish(akame), !.
@@ -107,10 +122,20 @@ getFish(2) :-
 	addFish(goldfish), !.
 
 getFish(3) :-
-	addFish(tuna), !.
+	getFishingLevel(FishLevel),
+	( FishLevel @< 2 -> (
+		write('You caught something, but it escaped!'), nl, !
+	) ; (
+		addFish(tuna), !
+	)).
 
 getFish(4) :-
-	addFish(carp), !.
+	getFishingLevel(FishLevel),
+	( FishLevel @< 3 -> (
+		write('You caught something, but it escaped!'), nl, !
+	) ; (
+		addFish(carp), !
+	)).
 
 getFish(Num) :-
 	(Num @< 1 ; Num @> 4),

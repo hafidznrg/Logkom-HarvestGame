@@ -15,9 +15,9 @@ price(egg, 200).
 price(milk, 400).
 price(wool, 300).
 price(akame, 200).
-price(goldfish, 225).
-price(tuna, 210).
-price(carp, 220).
+price(goldfish, 200).
+price(tuna, 250).
+price(carp, 300).
 
 % I.S -
 % F.S get Elemen in list buy depend on Index

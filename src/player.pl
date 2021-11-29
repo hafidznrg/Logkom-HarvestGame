@@ -214,6 +214,7 @@ initFisherman :-
     assertz(invCount(fishing_rod,1)),
     assertz(itemLevel(shovel,1)),
     assertz(itemLevel(fishing_rod,2)),
+    assertz(fishStamina(2)),
     assertz(totalItem(2)),
     write('You choose Fisherman. You have level 2 fishing rod.\n'),
     write('Let\'s start farming!\n').
@@ -227,6 +228,7 @@ initFarmer :-
     assertz(invCount(fishing_rod,1)),
     assertz(itemLevel(shovel,1)),
     assertz(itemLevel(fishing_rod,1)),
+    assertz(fishStamina(1)),
     assertz(totalItem(5)),
     increaseSeed(carrot_seed, 1),
     increaseSeed(corn_seed, 1),
@@ -247,6 +249,7 @@ initRancher :-
     assertz(invCount(fishing_rod,1)),
     assertz(itemLevel(shovel,1)),
     assertz(itemLevel(fishing_rod,1)),
+    assertz(fishStamina(1)),
     retract(ternak(_)),
     retract(count(chicken,0)),
     assertz(ternak([chicken])),
