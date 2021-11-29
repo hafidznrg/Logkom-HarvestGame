@@ -13,10 +13,19 @@
 :- dynamic(gameStarted/0).
 :- dynamic(gameLoaded/0).
 
-startGame :- 
+startGame :-
+    gameLoaded,
+    write('The game has already been loaded!'), nl, !.
+startGame :-
+    gameStarted,
+    write('The game has already been loaded!'), nl, !.
+startGame :-
     asserta(gameLoaded),
     showMenu.
 
+start :-
+    gameStarted,
+    write('The game has already been started!'), nl, !.
 start :- 
     gameLoaded,
     retract(gameLoaded),

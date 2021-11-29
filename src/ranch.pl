@@ -64,22 +64,41 @@ showTernak([Head|Tail]) :-
 
 % I.S. Cattle is ready
 % F.S. Harvest
+ranchLevel(X) :-
+    stats(_, _, S, _, _),
+    [_, _, Ranching] = S,
+    [_, X, _] = Ranching, !.
+
 harvestRanch(Hewan) :-
+    ranchLevel(RanchingLevel),
     ternak(ListTernak),
     isMember(Hewan, ListTernak),
     lastHarvest(Hewan, Day0),
     day(Day),
-    Day > Day0+5, !,
+    AdditionalDay is 5 - RanchingLevel,
+    (AdditionalDay @=< 0 -> (
+        DayCheck is 1 + Day0
+    ) ; (
+        DayCheck is Day0 + AdditionalDay
+    )),
+    Day > DayCheck, !,
     harvestThis(Hewan), !.
 
 % I.S. Cattle isn't ready
 % F.S. Display error message
 harvestRanch(Hewan) :-
+    ranchLevel(RanchingLevel),
     ternak(ListTernak),
     isMember(Hewan, ListTernak),
     lastHarvest(Hewan, Day0),
     day(Day),
-    Day =< Day0+5,
+    AdditionalDay is 5 - RanchingLevel,
+    (AdditionalDay @=< 0 -> (
+        DayCheck is 1 + Day0
+    ) ; (
+        DayCheck is Day0 + AdditionalDay
+    )),
+    Day =< DayCheck,
     produce(Hewan,Result),
     write('Your '), write(Hewan), write(' hasn\'t produced any '), write(Result), nl,
     write('Please check again later.'), nl.
