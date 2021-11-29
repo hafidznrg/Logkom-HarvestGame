@@ -121,7 +121,7 @@ getFish(_) :-
 addFish(X) :-
 	addToInventory(X, 1),
 	write('*** You caught a(n) '), write(X), write('!'),  nl,
-  addFishingExp(10), !.
+  addFishingExp(50), !.
 
 % showFishes(List, Count) shows the list of fishes that the player have.
 showFishes([], 1) :-
