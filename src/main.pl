@@ -68,7 +68,9 @@ dig :-
             tile(X,Y,C),
             retract(tile(X, Y, 'P')),
             asserta(tile(X,Y,'=')), 
-            asserta(tile(X, Y, 'P'))
+            asserta(tile(X, Y, 'P')),
+            itemLevel(shovel, Level),
+            efectShovel(Level)
         ),
     !. 
     
@@ -133,6 +135,3 @@ showChoice :-
     write('1. Fisherman'), nl,
     write('2. Farmer'), nl,
     write('3. Rancher'), nl.
-
-load :-
-    consult('save_data/1.pl').

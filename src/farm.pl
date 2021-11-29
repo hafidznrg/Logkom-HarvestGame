@@ -3,6 +3,7 @@
 :- dynamic(seed/1).
 :- dynamic(seedTile/3).
 :- dynamic(limitFarm/1).
+:- dynamic(digStamina/1).
 
 % Define plant in farm 
 plantproduce([corn, tomato, carrot]).
@@ -36,6 +37,7 @@ initSeed([Head1|Tail1]) :-
 initFarm :-
     seeds(ListSeed),
     assertz(limitFarm(0)),
+    assertz(digStamina(0)),
     cornSeed(ListCorn),
     carrotSeed(ListCarrot),
     tomatoSeed(ListTomato),
@@ -320,3 +322,17 @@ addFarmExp(Amount) :-
     write('> Farming experience added by '), write(Amount), write('!'), nl,
 	write('> Current farming level: '), write(Level_), nl,
 	write('> Current farming EXP: '), write(Exp_), nl, !.
+
+efectShovel(Level) :-
+    digStamina(Stamina),
+    Stamina1 is Stamina + 1,
+    retract(digStamina(Stamina)),
+    asserta(digStamina(Stamina1)),
+    ((Level = 1, Stamina1 = 2) -> work,resetEfect;
+    (Level = 2, Stamina1 = 3) -> work,resetEfect;
+    (Level = 3, Stamina1 = 3) -> work,resetEfect;
+    write('')), !.
+
+resetEfect :-
+    retract(digStamina(_)),
+    asserta(digStamina(0)), !.
