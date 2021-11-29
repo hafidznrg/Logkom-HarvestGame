@@ -144,3 +144,40 @@ removeFromInventory(Item, Count) :-
 removeFromInventory(Item, _) :-
   itemName(Item, ItemName),
   write('You don\'t have enough '), write(ItemName), write('s.'), nl, !.
+
+throwItem :-
+  gameStarted,
+  showInventory, nl, nl,
+  write('What do you want to throw?'), nl,
+  write('> '),
+  read(ItemObject),
+  handleThrow(ItemObject).
+handleThrow(ItemObject) :-
+  category(ItemObject, ItemCategory),
+  (ItemCategory == 'tool' ; ItemCategory == 'animal'),
+  nl, write('You can\'t throw away this item! Cancelling ...'), nl, !.
+handleThrow(ItemObject) :-
+  invCount(ItemObject, ItemCount),
+  ItemCount @> 0,
+  category(ItemObject, ItemCategory),
+  ItemCategory \== 'seed',
+  itemName(ItemObject, ItemName),
+  nl, write('You have '), write(ItemCount), write(' '), write(ItemName), write('. How many do you want to throw?'), nl,
+  write('> '),
+  read(Amount),
+  nl, removeFromInventory(ItemObject, Amount), !.
+handleThrow(ItemObject) :-
+  invCount(ItemObject, ItemCount),
+  ItemCount @> 0,
+  category(ItemObject, ItemCategory),
+  ItemCategory == 'seed',
+  itemName(ItemObject, ItemName),
+  nl, write('You have '), write(ItemCount), write(' '), write(ItemName), write('. How many do you want to throw?'), nl,
+  write('> '),
+  read(Amount),
+  nl, removeFromInventory(ItemObject, Amount), 
+  count(ItemObject, Count),
+  Counta is Count - 1,
+  retract(count(ItemObject, Count)),
+  assertz(count(ItemObject, Counta)), 
+  !.
