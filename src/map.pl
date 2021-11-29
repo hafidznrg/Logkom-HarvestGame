@@ -18,7 +18,7 @@ assertWater([(X,Y)|Tail]) :-
 createMap1 :-
     asserta(map_size(15,20)),
     assertz(tile(0,_,'#')), assertz(tile(_,0,'#')), assertz(tile(16,_,'#')), assertz(tile(_,21,'#')),
-    assertz(tile(2,6,'R')), asserta(tile(4,4,'P')), assertz(tile(4,4,'H')), assertz(tile(4,9,'F')), assertz(tile(8,8,'Q')), assertz(tile(8,13,'M')),
+    assertz(tile(2,6,'R')), asserta(tile(4,4,'P')), assertz(tile(4,4,'H')), assertz(tile(8,8,'Q')), assertz(tile(8,13,'M')),
     listWater1(ListWater), assertWater(ListWater).
 
 % I.S. RNG get 2
@@ -26,7 +26,7 @@ createMap1 :-
 createMap2 :-
     asserta(map_size(15,20)),
     assertz(tile(0,_,'#')), assertz(tile(_,0,'#')), assertz(tile(16,_,'#')), assertz(tile(_,21,'#')),
-    assertz(tile(10,5,'R')), asserta(tile(12,16,'P')), assertz(tile(12,16,'H')), assertz(tile(13,11,'F')), assertz(tile(4,9,'Q')), assertz(tile(7,15,'M')),
+    assertz(tile(10,5,'R')), asserta(tile(12,16,'P')), assertz(tile(12,16,'H')), assertz(tile(4,9,'Q')), assertz(tile(7,15,'M')),
     listWater2(ListWater), assertWater(ListWater).
 
 % I.S. Initialize MAP
