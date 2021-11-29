@@ -30,7 +30,8 @@ displayDayMessage :-
     atom_concat('Day ', Day, Msg),
     typewrite(Msg, 0.5),
     nl,
-    typewrite('~~~~~~~~~~~~~~~~~~~~~~~~~', 0.025)
+    typewrite('~~~~~~~~~~~~~~~~~~~~~~~~~', 0.025),
+    nl
     .
 
 % I.S. stats(_, _, _, _, G) for G >= 20000.
