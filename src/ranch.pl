@@ -101,7 +101,7 @@ harvestRanch(Hewan) :-
     Day =< DayCheck,
     produce(Hewan,Result),
     write('Your '), write(Hewan), write(' hasn\'t produced any '), write(Result), nl,
-    write('Please check again later.'), nl.
+    write('Please check again later.'), nl, !.
 
 % I.S. Command isn't match
 % F.S. Display error message
@@ -121,16 +121,17 @@ harvestThis(Hewan) :-
     totalItem(TotalItem),
     InvCheck is TotalItem + Num,
     ( InvCheck @> 100 -> (
-        nl, write('Clear out some space from your inventory first before harvesting!'), nl
+        nl, write('Clear out some space from your inventory first before harvesting!'), nl, !
     ) ; (
-        showResult(Num,Product),
+        !,
+        showResult(Num,Product), !,
         addToInventory(Product, Num),
         count(Product,Before),
         After is Before+Num,
         retract(count(Product,Before)),
         assertz(count(Product,After)),
         work,
-        addRanchExp(50),
+        addRanchExp(50), !,
         lastHarvest(Hewan, Day0),
         day(Day),
         retract(lastHarvest(Hewan,Day0)),
@@ -149,7 +150,7 @@ getRanchLevel([[Specialty, Level, _] | Tail], Job, X) :-
 % I.S. -
 % F.S. Displayed message
 showResult(Num,Product) :-
-    write('You got '), write(Num), write(' '), write(Product), (Num>1, write('s'), nl; nl).
+    write('You got '), write(Num), write(' '), write(Product), (Num>1, write('s'), nl; nl), !.
 
 % I.S -
 % F.S add animal to list ternak
