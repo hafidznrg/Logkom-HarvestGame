@@ -31,7 +31,7 @@ house :-
         (Cmd = 'write', writeDiaryHandler, !);
         (Cmd = 'write diary', writeDiaryHandler, !);
         (Cmd = 'exit', !);
-        write('Invalid choice !')
+        write('Invalid choice !'), !
     )
     .
 house :-
@@ -167,11 +167,13 @@ save :-
     
     saveTile(Stream),
 
-    fishes(I),
-    writeSaveData(Stream, fishes(I)),
+    saveItemLevel(Stream),
 
-    inventory(J),
-    writeSaveData(Stream, inventory(J)),
+    limitFarm(LF),
+    writeSaveData(Stream, limitFarm(LF)),
+
+    inv(J),
+    writeSaveData(Stream, inv(J)),
 
     map_size(Width, Height),
     writeSaveData(Stream, map_size(Width, Height)),
@@ -193,6 +195,16 @@ save :-
     writeSaveData(Stream, ternak(R)),
 
     writeSaveData(Stream, day(DayInt)),
+
+    levelUpExp(LExp),
+    writeSaveData(Stream, levelUpExp(LExp)),
+
+    specialtyLevelUpExp(farming, FarmLE),
+    writeSaveData(Stream, specialtyLevelUpExp(farming, FarmLE)),
+    specialtyLevelUpExp(fishing, FishLE),
+    writeSaveData(Stream, specialtyLevelUpExp(fishing, FishLE)),
+    specialtyLevelUpExp(ranching, RanchLE),
+    writeSaveData(Stream, specialtyLevelUpExp(ranching, RanchLE)),
 
     write(Stream, '  !.\n'),
 
@@ -240,6 +252,12 @@ saveLastHarvestSeed(Stream) :-
     writeSaveDataLoop(Stream, lastHarvestSeed(A, B)).
 saveLastHarvestSeed(_) :- !.
 
+saveItemLevel(Stream) :-
+    current_predicate(itemLevel/2),
+    itemLevel(A, B),
+    writeSaveDataLoop(Stream, itemLevel(A, B)).
+saveItemLevel(_) :- !.
+
 saveQuest(Stream) :-
     current_predicate(quest/3),
     quest(M, N, O),
@@ -285,8 +303,12 @@ loadData(Day) :-
         current_predicate(tile/3) ->
         retractall(tile(_, _, _))
     ),
-    retractall(fishes(_)),
-    retractall(inventory(_)),
+    (
+        current_predicate(itemLevel/2) ->
+        retractall(itemLevel(_, _))
+    ),
+    retractall(limitFarm(_)),
+    retractall(inv(_)),
     retractall(map_size(_)),
     retractall(stats(_, _, _, _, _)),
     retractall(limit(_)),
@@ -301,6 +323,8 @@ loadData(Day) :-
     ),
     retractall(ternak(_)),
     retractall(day(_)),
+    retractall(levelUpExp(_)),
+    retractall(specialtyLevelUpExp(_, _)),
     toString(Day, DayStr),
     atom_concat('save_data/', DayStr, Base),
     atom_concat(Base, '.pl', Filename),

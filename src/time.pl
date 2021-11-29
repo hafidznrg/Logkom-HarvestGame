@@ -23,9 +23,15 @@ nextDay :-
 % I.S. nextDay called
 % F.S. Displayed day message to the console.
 displayDayMessage :-
+    typewrite('~~~~~~~~~~~~~~~~~~~~~~~~~', 0.025),
+    nl,
     day(D),
-    write('Day '),
-    write(D).
+    toString(D, Day),
+    atom_concat('Day ', Day, Msg),
+    typewrite(Msg, 0.5),
+    nl,
+    typewrite('~~~~~~~~~~~~~~~~~~~~~~~~~', 0.025)
+    .
 
 % I.S. stats(_, _, _, _, G) for G >= 20000.
 % F.S. Player win the game.
