@@ -219,7 +219,8 @@ harvestPlant(Plant) :-
         asserta(tile(XTile,YTile,'P')),
         addFarmExp(10),
         harvestHelper(XTile, YTile),
-        write('You harvested '), write(Num) ,write(' corn'),nl, !
+        write('You harvested '), write(Num) ,write(' corn'),nl, 
+        handleFarmQuest(Num), !
     )).
 
 % I.S. Farm is ready to harvest
@@ -246,7 +247,8 @@ harvestPlant(Plant) :-
         asserta(tile(XTile,YTile,'P')),
         addFarmExp(10),
         harvestHelper(XTile, YTile),
-        write('You harvested '), write(Num) ,write(' carrot'),nl, !
+        write('You harvested '), write(Num) ,write(' carrot'),nl, 
+        handleFarmQuest(Num), !
     )).
 
 % I.S. Farm is ready to harvest
@@ -273,7 +275,8 @@ harvestPlant(Plant) :-
         asserta(tile(XTile,YTile,'P')),
         addFarmExp(10),
         harvestHelper(XTile, YTile),
-        write('You harvested '), write(Num) ,write(' tomato'),nl, !
+        write('You harvested '), write(Num) ,write(' tomato'),nl, 
+        handleFarmQuest(Num), !
     )).
 
 % I.S -

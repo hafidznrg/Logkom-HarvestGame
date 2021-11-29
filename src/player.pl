@@ -155,7 +155,7 @@ addGold(Qty) :-
 
 checkGold :-
     stats(_, _, _, _, Gold),
-    (Gold >= 20000 -> win).
+    (Gold >= 20000 -> win ; !).
 
 % I.S. stats(J, L, S, E, Gold)
 % F.S. stats(J, L, S, E, Gold - Qty)

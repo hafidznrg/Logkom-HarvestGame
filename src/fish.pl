@@ -101,19 +101,21 @@ handleFish :-
 % X = 4 -> carp
 % Other than that, the player catches nothing.
 getFish(1) :-
-	addFish(akame).
+	addFish(akame), !.
 
 getFish(2) :-
-	addFish(goldfish).
+	addFish(goldfish), !.
 
 getFish(3) :-
-	addFish(tuna).
+	addFish(tuna), !.
 
 getFish(4) :-
-	addFish(carp).
+	addFish(carp), !.
 
-getFish(_) :-
+getFish(Num) :-
+	(Num @< 1 ; Num @> 4),
 	write('You failed to catch anything!'), nl, !.
+getFish(_) :- !.
 
 % addFish(X) is a helper function for getFish(X).
 % Basically, it appends the fish to fishes if it isn't there yet,
@@ -128,7 +130,8 @@ addFish(X) :-
 	) ; (
 		addToInventory(X, 1),
 		write('*** You caught a(n) '), write(X), write('!'),  nl,
-  	addFishingExp(50), !
+  	addFishingExp(50), 
+		handleFishQuest(1), !
 	)).
 
 % showFishes(List, Count) shows the list of fishes that the player have.

@@ -79,7 +79,7 @@ quest :-
     gameStarted,
     tile(X,Y,'P'),
     (tile(X,Y,'Q') -> handleQuest;
-    write('You need to go to the ?? first.'), nl), !.
+    write('You need to go to the Q tile first.'), nl), !.
 
 harvest :-
     gameStarted,

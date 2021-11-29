@@ -115,7 +115,8 @@ harvestThis(Hewan) :-
         lastHarvest(Hewan, Day0),
         day(Day),
         retract(lastHarvest(Hewan,Day0)),
-        assertz(lastHarvest(Hewan, Day))
+        assertz(lastHarvest(Hewan, Day)),
+        handleRanchQuest(Num), !
     )), !.
 
 getRanchLevel([],_,0) :- !.
