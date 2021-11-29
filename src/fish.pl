@@ -69,11 +69,15 @@ addFishingExp(Amount) :-
   NewExp is Exp + Amount,
   NewE is E + Amount,
   NewS = [Farming, [Specialty, Level, NewExp], Ranching],
-  write('> Fishing experience added by '), write(Amount), write('!'), nl,
-	write('> Current fishing level: '), write(Level), nl,
-	write('> Current fishing EXP: '), write(NewE), nl,
   retract(stats(_,_,_,_,_)),
-  assertz(stats(J, L, NewS, NewE, G)), !.
+  assertz(stats(J, L, NewS, NewE, G)),
+	checkExp,
+	stats(_, _, S_, _, _),
+	[_, Fishing_, _] = S_,
+	[_, Level_, Exp_] = Fishing_,
+  write('> Fishing experience added by '), write(Amount), write('!'), nl,
+	write('> Current fishing level: '), write(Level_), nl,
+	write('> Current fishing EXP: '), write(Exp_), nl, !.
 
 % Handle fish!
 % I.S. The player has a list of fishes
