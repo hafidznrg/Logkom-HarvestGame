@@ -330,7 +330,7 @@ efectShovel(Level) :-
     asserta(digStamina(Stamina1)),
     ((Level = 1, Stamina1 = 2) -> work,resetEfect;
     (Level = 2, Stamina1 = 3) -> work,resetEfect;
-    (Level = 3, Stamina1 = 3) -> work,resetEfect;
+    (Level = 3, Stamina1 = 5) -> work,resetEfect;
     write('')), !.
 
 resetEfect :-
