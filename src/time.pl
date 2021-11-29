@@ -18,7 +18,7 @@ nextDay :-
     NextDay is Day + 1,
     asserta(day(NextDay)),
     displayDayMessage,
-    (Day is 366 -> lose; !).
+    (NextDay is 366 -> lose; !).
 
 % I.S. nextDay called
 % F.S. Displayed day message to the console.
